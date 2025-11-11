@@ -3,6 +3,17 @@
 <?php $__env->startSection('content'); ?>
 <div class="grid grid-cols-12 gap-4 md:gap-6">
   <div class="col-span-12">
+    
+    <?php if($errors->any()): ?>
+      <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-700/40 dark:bg-red-900/30 dark:text-red-300">
+        <ul class="list-disc pl-5 space-y-1">
+          <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <li><?php echo e($error); ?></li>
+          <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </ul>
+      </div>
+    <?php endif; ?>
+    
     <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/3">
       <div class="px-5 py-4 sm:px-6 sm:py-5 flex items-center justify-between">
         <h3 class="text-base font-medium text-gray-800 dark:text-white/90">Create Product</h3>

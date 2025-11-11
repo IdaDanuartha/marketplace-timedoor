@@ -189,12 +189,13 @@
                 </span>
               </td>
               <td class="px-5 py-3 text-right">
-                <a href="{{ route('orders.edit', $order) }}" 
+                <a href="{{ route('orders.edit', $order) }}" onclick="event.stopPropagation()"
                   class="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400 font-medium transition">
                   Edit
                 </a>
                 <button 
                   @click.prevent="
+                    event.stopPropagation();
                     title = '{{ $order->code }}'; 
                     deleteUrl = '{{ route('orders.destroy', $order) }}'; 
                     isModalOpen = true
@@ -223,8 +224,9 @@
   <!-- Delete Modal -->
   <x-modal.modal-delete />
 </div>
+@endsection
 
-{{-- Scripts --}}
+@push('js')
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     $('.select2').select2({
@@ -233,4 +235,4 @@
     });
   });
 </script>
-@endsection
+@endpush

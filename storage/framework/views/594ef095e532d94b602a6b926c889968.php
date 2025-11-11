@@ -189,12 +189,13 @@
                 </span>
               </td>
               <td class="px-5 py-3 text-right">
-                <a href="<?php echo e(route('orders.edit', $order)); ?>" 
+                <a href="<?php echo e(route('orders.edit', $order)); ?>" onclick="event.stopPropagation()"
                   class="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400 font-medium transition">
                   Edit
                 </a>
                 <button 
                   @click.prevent="
+                    event.stopPropagation();
                     title = '<?php echo e($order->code); ?>'; 
                     deleteUrl = '<?php echo e(route('orders.destroy', $order)); ?>'; 
                     isModalOpen = true

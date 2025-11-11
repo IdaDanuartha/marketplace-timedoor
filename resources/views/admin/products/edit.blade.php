@@ -29,49 +29,72 @@
 
           {{-- Basic Inputs --}}
           <div class="grid grid-cols-2 gap-4">
+            {{-- Name --}}
             <div>
               <label class="block text-sm font-medium mb-1">Name</label>
               <input type="text" name="name" value="{{ old('name', $product->name) }}" placeholder="Enter product name"
-                class="w-full border rounded-lg px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-white" required>
+                class="w-full border rounded-lg px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-white @error('name') border-red-500 @enderror" required>
+              @error('name')
+                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+              @enderror
             </div>
 
+            {{-- Price --}}
             <div>
               <label class="block text-sm font-medium mb-1">Price</label>
               <input type="number" name="price" value="{{ old('price', $product->price) }}" placeholder="Enter product price"
-                class="w-full border rounded-lg px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-white" required>
+                class="w-full border rounded-lg px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-white @error('price') border-red-500 @enderror" required>
+              @error('price')
+                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+              @enderror
             </div>
 
+            {{-- Stock --}}
             <div>
               <label class="block text-sm font-medium mb-1">Stock</label>
               <input type="number" name="stock" value="{{ old('stock', $product->stock) }}" placeholder="Enter product stock"
-                class="w-full border rounded-lg px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-white" required>
+                class="w-full border rounded-lg px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-white @error('stock') border-red-500 @enderror" required>
+              @error('stock')
+                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+              @enderror
             </div>
 
+            {{-- Category (hierarchy display) --}}
             <div>
               <label class="block text-sm font-medium mb-1">Category</label>
-              <select name="category_id" class="select2 w-full" required>
-                @foreach ($categories as $category)
-                  <option value="{{ $category->id }}" {{ $product->category_id == $category->id ? 'selected' : '' }}>
-                    {{ $category->name }}
-                  </option>
-                @endforeach
+              <select name="category_id" class="select2 w-full @error('category_id') border-red-500 @enderror" required>
+                <option value="">Select Category</option>
+                @include('admin.products.partials.category-options', [
+                  'categories' => $categories,
+                  'depth' => 0,
+                  'selectedCategory' => $product->category_id,
+                ])
               </select>
+              @error('category_id')
+                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+              @enderror
             </div>
 
+            {{-- Vendor --}}
             <div>
               <label class="block text-sm font-medium mb-1">Vendor</label>
-              <select name="vendor_id" class="select2 w-full" required>
+              <select name="vendor_id" class="select2 w-full @error('vendor_id') border-red-500 @enderror" required>
+                <option value="">Select Vendor</option>
                 @foreach ($vendors as $vendor)
                   <option value="{{ $vendor->id }}" {{ $product->vendor_id == $vendor->id ? 'selected' : '' }}>
                     {{ $vendor->name }}
                   </option>
                 @endforeach
               </select>
+              @error('vendor_id')
+                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+              @enderror
             </div>
 
+            {{-- Status --}}
             <div>
               <label class="block text-sm font-medium mb-1">Status</label>
-              <select name="status" class="select2 w-full" required>
+              <select name="status" class="select2 w-full @error('status') border-red-500 @enderror" required>
                 @foreach (\App\Enum\ProductStatus::cases() as $case)
                   <option value="{{ $case->name }}"
                     {{ old('status', $product->status->name ?? \App\Enum\ProductStatus::ACTIVE->name) === $case->name ? 'selected' : '' }}>
@@ -89,6 +112,9 @@
           <div class="my-4">
             <label class="block text-sm font-medium mb-2">Description</label>
             <textarea name="description" id="editor" rows="6">{{ old('description', $product->description) }}</textarea>
+            @error('description')
+              <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+            @enderror
           </div>
 
           {{-- Image Upload Section --}}
@@ -134,8 +160,9 @@
     </div>
   </div>
 </div>
+@endsection
 
-{{-- Scripts --}}
+@push('js')
 <script>
   // File Preview
   const fileInput = document.getElementById('fileInput');
@@ -176,4 +203,4 @@
     `
   });
 </script>
-@endsection
+@endpush

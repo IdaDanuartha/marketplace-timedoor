@@ -146,8 +146,9 @@
     </div>
   </div>
 </div>
+@endsection
 
-{{-- Scripts --}}
+@push('js')
 <script>
   function orderForm() {
     return {
@@ -211,4 +212,4 @@
     };
   }
 </script>
-@endsection
+@endpush

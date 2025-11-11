@@ -150,7 +150,8 @@
 
           <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
             <?php $__empty_1 = true; $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-              <tr>
+              <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/40 cursor-pointer" 
+                onclick="window.location='<?php echo e(route('products.show', $product)); ?>'">
                 <td class="px-5 py-3 text-gray-800 dark:text-gray-200 font-semibold">
                   <?php echo e($product->name); ?>
 
@@ -185,12 +186,13 @@
 
 
                 <td class="px-5 py-3 text-right">
-                  <a href="<?php echo e(route('products.edit', $product)); ?>" 
+                  <a href="<?php echo e(route('products.edit', $product)); ?>"  onclick="event.stopPropagation()"
                     class="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400 font-medium transition">
                     Edit
                   </a>
                   <button 
                     @click.prevent="
+                      event.stopPropagation();
                       title = '<?php echo e($product->name); ?>'; 
                       deleteUrl = '<?php echo e(route('products.destroy', $product)); ?>'; 
                       isModalOpen = true

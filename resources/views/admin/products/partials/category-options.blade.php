@@ -1,13 +1,16 @@
 @foreach ($categories as $category)
-  <option value="{{ $category->id }}" 
-    {{ old('category_id') == $category->id ? 'selected' : '' }}>
+  @php
+    $isSelected = old('category_id', $selectedCategory ?? null) == $category->id;
+  @endphp
+  <option value="{{ $category->id }}" {{ $isSelected ? 'selected' : '' }}>
     {{ str_repeat('— ', $depth) . $category->name }}
   </option>
 
-  @if ($category->children->isNotEmpty())
+  @if ($category->children && $category->children->isNotEmpty())
     @include('admin.products.partials.category-options', [
       'categories' => $category->children,
-      'depth' => $depth + 1
+      'depth' => $depth + 1,
+      'selectedCategory' => $selectedCategory ?? null,
     ])
   @endif
 @endforeach

@@ -13,7 +13,7 @@ class Customer extends BaseModel
 
     public function address(): BelongsToMany
     {
-        return $this->belongsToMany(Address::class);
+        return $this->belongsToMany(Address::class, 'customer_addresses');
     }
 
     public function user(): BelongsTo

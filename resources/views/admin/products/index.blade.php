@@ -152,7 +152,8 @@
 
           <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
             @forelse ($products as $product)
-              <tr>
+              <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/40 cursor-pointer" 
+                onclick="window.location='{{ route('products.show', $product) }}'">
                 <td class="px-5 py-3 text-gray-800 dark:text-gray-200 font-semibold">
                   {{ $product->name }}
                 </td>
@@ -184,12 +185,13 @@
 
 
                 <td class="px-5 py-3 text-right">
-                  <a href="{{ route('products.edit', $product) }}" 
+                  <a href="{{ route('products.edit', $product) }}"  onclick="event.stopPropagation()"
                     class="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400 font-medium transition">
                     Edit
                   </a>
                   <button 
                     @click.prevent="
+                      event.stopPropagation();
                       title = '{{ $product->name }}'; 
                       deleteUrl = '{{ route('products.destroy', $product) }}'; 
                       isModalOpen = true

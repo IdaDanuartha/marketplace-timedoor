@@ -59,6 +59,18 @@ class ProductController extends Controller
         }
     }
 
+    public function show(Product $product)
+    {
+        try {
+            $product->load(['category', 'vendor']);
+            return view('admin.products.show', compact('product'));
+        } catch (Throwable $e) {
+            Log::error('Failed to load product details: ' . $e->getMessage());
+            return back()->withErrors('Unable to load product details.');
+        }
+    }
+
+
     public function edit(Product $product)
     {
         try {

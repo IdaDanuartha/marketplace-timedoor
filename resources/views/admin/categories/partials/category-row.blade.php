@@ -1,4 +1,4 @@
-<tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/40 cursor-pointer" onclick="window.location='{{ route('categories.show', $category) }}'">
   <td class="px-5 py-3">
     <span class="font-semibold text-gray-800 dark:text-white">{{ $category->name }}</span>
   </td>
@@ -12,12 +12,13 @@
   </td>
 
   <td class="px-5 py-3 text-right">
-    <a href="{{ route('categories.edit', $category) }}" 
+    <a href="{{ route('categories.edit', $category) }}" onclick="event.stopPropagation()"
        class="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400 font-medium transition">
       Edit
     </a>
     <button 
       @click.prevent="
+        event.stopPropagation();
         title = '{{ $category->name }}'; 
         deleteUrl = '{{ route('categories.destroy', $category) }}'; 
         isModalOpen = true

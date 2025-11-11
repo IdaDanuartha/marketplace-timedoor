@@ -125,8 +125,8 @@
               <a href="{{ route('vendors.index') }}"
                 class="menu-item group {{ request()->is('dashboard/vendors*') ? 'menu-item-active' : 'menu-item-inactive' }}">
                 <svg class="menu-item-icon" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                  <path d="M4 8h16v12H4z" stroke="currentColor" stroke-width="1.5"/>
-                  <path d="M4 8l4-4h8l4 4" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M12 12a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M6 20a6 6 0 0112 0H6z" stroke="currentColor" stroke-width="1.5"/>
                 </svg>
                 <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Vendors</span>
               </a>

@@ -58,6 +58,23 @@ class CategoryController extends Controller
         }
     }
 
+    public function show(Category $category)
+    {
+        try {
+            $category->load('parent');
+
+            $products = $category->products()
+                ->with('vendor')
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
+
+            return view('admin.categories.show', compact('category', 'products'));
+        } catch (Throwable $e) {
+            Log::error('Failed to load category details: ' . $e->getMessage());
+            return back()->withErrors('Unable to load category details.');
+        }
+    }
+
     public function edit(Category $category)
     {
         try {

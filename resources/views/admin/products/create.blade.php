@@ -143,8 +143,9 @@
     </div>
   </div>
 </div>
+@endsection
 
-{{-- Scripts --}}
+@push('js')
 <script>
   // Image Preview
   const fileInput = document.getElementById('fileInput');
@@ -185,4 +186,4 @@
     `
   });
 </script>
-@endsection
+@endpush
