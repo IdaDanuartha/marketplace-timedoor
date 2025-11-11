@@ -33,9 +33,7 @@
             <li>
               <a href="<?php echo e(route('dashboard.index')); ?>"
                 class="menu-item group <?php echo e(request()->is('dashboard') ? 'menu-item-active' : 'menu-item-inactive'); ?>">
-                <svg class="menu-item-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8v-10h-8v10zm0-18v6h8V3h-8z" fill="currentColor"/>
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="menu-item-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-line-icon lucide-chart-line"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg>
                 <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Dashboard</span>
               </a>
             </li>
@@ -154,10 +152,7 @@
             <li>
               <a href="<?php echo e(route('profile.edit')); ?>"
                 class="menu-item group <?php echo e(request()->routeIs('profile.edit') ? 'menu-item-active' : 'menu-item-inactive'); ?>">
-                <svg class="menu-item-icon" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                  <path d="M12 12a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="1.5"/>
-                  <path d="M6 20a6 6 0 0112 0H6z" stroke="currentColor" stroke-width="1.5"/>
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="menu-item-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-cog-icon lucide-user-round-cog"><path d="m14.305 19.53.923-.382"/><path d="m15.228 16.852-.923-.383"/><path d="m16.852 15.228-.383-.923"/><path d="m16.852 20.772-.383.924"/><path d="m19.148 15.228.383-.923"/><path d="m19.53 21.696-.382-.924"/><path d="M2 21a8 8 0 0 1 10.434-7.62"/><path d="m20.772 16.852.924-.383"/><path d="m20.772 19.148.924.383"/><circle cx="10" cy="8" r="5"/><circle cx="18" cy="18" r="3"/></svg>
                 <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Edit Profile</span>
               </a>
             </li>
@@ -166,9 +161,7 @@
               <li>
                 <a href="<?php echo e(route('settings.index')); ?>"
                   class="menu-item group <?php echo e(request()->is('dashboard/settings*') ? 'menu-item-active' : 'menu-item-inactive'); ?>">
-                  <svg class="menu-item-icon" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path d="M12 3v18m9-9H3" stroke="currentColor" stroke-width="1.5"/>
-                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="menu-item-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-icon lucide-settings"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg>
                   <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Web Settings</span>
                 </a>
               </li>
