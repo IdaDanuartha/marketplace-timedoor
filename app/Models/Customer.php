@@ -11,7 +11,7 @@ class Customer extends BaseModel
 {
     protected $guarded = [];
 
-    public function address(): BelongsToMany
+    public function addresses(): BelongsToMany
     {
         return $this->belongsToMany(Address::class, 'customer_addresses');
     }

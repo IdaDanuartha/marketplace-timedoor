@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->string('country')->default('Indonesia');
-            $table->string('province');
-            $table->string('city');
-            $table->string('district');
-            $table->text('street_address');
+            $table->text('full_address');
+            $table->text('additional_information')->nullable();
             $table->string('postal_code');
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
+            $table->string('label')->default('Home'); // e.g., Home, Work, Office, etc.
             $table->boolean('is_default')->default(false);
             $table->timestamps();
 
-            $table->index(['province', 'city', 'district']);
+            $table->index(['postal_code', 'latitude', 'longitude', 'label']);
         });
     }
 

@@ -244,8 +244,9 @@
 <?php unset($__componentOriginalacfa148ccbbfb47f9db0a9452e7e721a); ?>
 <?php endif; ?>
 </div>
+<?php $__env->stopSection(); ?>
 
-
+<?php $__env->startPush('js'); ?>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     $('.select2').select2({
@@ -254,5 +255,5 @@
     });
   });
 </script>
-<?php $__env->stopSection(); ?>
+<?php $__env->stopPush(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /Users/gusde/Documents/laravel/marketplace-timedoor/resources/views/admin/orders/index.blade.php ENDPATH**/ ?>

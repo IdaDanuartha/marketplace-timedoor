@@ -11,13 +11,23 @@ class AddressFactory extends Factory
 
     public function definition(): array
     {
+        // generate random lat long dalam area Indonesia (approx range)
+        $latitude = $this->faker->latitude(-11.0, 6.0);  // Indonesia latitude range
+        $longitude = $this->faker->longitude(95.0, 141.0); // Indonesia longitude range
+
+        // generate address teks lengkap
+        $street = $this->faker->streetAddress();
+        $city = $this->faker->city();
+        $province = $this->faker->state();
+        $postal = $this->faker->postcode();
+
         return [
-            'country' => 'Indonesia',
-            'province' => fake()->state(),
-            'city' => fake()->city(),
-            'district' => fake()->citySuffix(),
-            'street_address' => fake()->streetAddress(),
-            'postal_code' => fake()->postcode(),
+            'full_address' => "{$street}, {$city}, {$province}, Indonesia {$postal}",
+            'additional_information' => $this->faker->optional()->sentence(),
+            'postal_code' => $postal,
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'label' => $this->faker->randomElement(['Home', 'Work', 'Office', 'Apartment']),
             'is_default' => false,
         ];
     }
