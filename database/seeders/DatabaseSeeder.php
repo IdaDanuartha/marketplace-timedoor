@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->command->info('🚀 Starting database seeding...');
+        $this->command->info('Starting database seeding...');
 
         $this->call([
             AdminSeeder::class,
@@ -27,8 +27,8 @@ class DatabaseSeeder extends Seeder
             ReviewSeeder::class,
         ]);
 
-        $this->command->info('✅ Database seeding completed successfully!');
-        $this->command->info('📊 Summary:');
+        $this->command->info('✓ Database seeding completed successfully!');
+        $this->command->info('  Summary:');
         $this->command->info('   - 1 Admin');
         $this->command->info('   - 10 Vendors');
         $this->command->info('   - 100 Customers (with 100-200 addresses)');
