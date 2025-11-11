@@ -23,118 +23,160 @@
 
   <div class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
     <nav>
-      <!-- STATISTICS -->
-      <div>
-        <h3 class="mb-4 text-xs uppercase leading-[20px] text-gray-400"
-          :class="sidebarToggle ? 'lg:hidden' : ''">Statistics</h3>
-        <ul class="flex flex-col gap-4 mb-6">
-          <li>
-            <a href="{{ route('dashboard.index') }}"
-              class="menu-item group {{ request()->is('dashboard') ? 'menu-item-active' : 'menu-item-inactive' }}">
-              {{-- Dashboard Icon --}}
-              <svg class="menu-item-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8v-10h-8v10zm0-18v6h8V3h-8z" fill="currentColor"/>
-              </svg>
-              <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Dashboard</span>
-            </a>
-          </li>
-        </ul>
-      </div>
 
-      <!-- MASTER DATA -->
-      <div>
-        <h3 class="mb-4 text-xs uppercase leading-[20px] text-gray-400"
-          :class="sidebarToggle ? 'lg:hidden' : ''">Master Data</h3>
-        <ul class="flex flex-col gap-4 mb-6">
-          <li>
-            <a href="{{ route('categories.index') }}"
-              class="menu-item group {{ request()->is('dashboard/categories*') ? 'menu-item-active' : 'menu-item-inactive' }}">
-              <svg class="menu-item-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                <path d="M4 9h16M9 4v16" stroke="currentColor" stroke-width="1.5"/>
-              </svg>
-              <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Categories</span>
-            </a>
-          </li>
+      {{-- ===== ADMIN & VENDOR: DASHBOARD ===== --}}
+      @if(auth()->user()?->admin || auth()->user()?->vendor)
+        <div>
+          <h3 class="mb-4 text-xs uppercase leading-5 text-gray-400"
+            :class="sidebarToggle ? 'lg:hidden' : ''">Statistics</h3>
+          <ul class="flex flex-col gap-4 mb-6">
+            <li>
+              <a href="{{ route('dashboard.index') }}"
+                class="menu-item group {{ request()->is('dashboard') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                <svg class="menu-item-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8v-10h-8v10zm0-18v6h8V3h-8z" fill="currentColor"/>
+                </svg>
+                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Dashboard</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      @endif
 
-          <li>
-            <a href="{{ route('products.index') }}"
-              class="menu-item group {{ request()->is('dashboard/products*') ? 'menu-item-active' : 'menu-item-inactive' }}">
-              <svg class="menu-item-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="1.5"/>
-                <path d="M9 4v16M4 9h16" stroke="currentColor" stroke-width="1.5"/>
-              </svg>
-              <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Products</span>
-            </a>
-          </li>
+      {{-- ===== ADMIN: MASTER DATA (Categories, Products, Orders) ===== --}}
+      @if(auth()->user()?->admin)
+        <div>
+          <h3 class="mb-4 text-xs uppercase leading-5 text-gray-400"
+            :class="sidebarToggle ? 'lg:hidden' : ''">Master Data</h3>
+          <ul class="flex flex-col gap-4 mb-6">
+            <li>
+              <a href="{{ route('categories.index') }}"
+                class="menu-item group {{ request()->is('dashboard/categories*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                <svg class="menu-item-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                  <path d="M4 9h16M9 4v16" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Categories</span>
+              </a>
+            </li>
 
-          <li>
-            <a href="{{ route('orders.index') }}"
-              class="menu-item group {{ request()->is('dashboard/orders*') ? 'menu-item-active' : 'menu-item-inactive' }}">
-              <svg class="menu-item-icon" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path d="M5 5h14v14H5z" stroke="currentColor" stroke-width="1.5"/>
-                <path d="M8 8h8M8 12h5" stroke="currentColor" stroke-width="1.5"/>
-              </svg>
-              <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Orders</span>
-            </a>
-          </li>
-        </ul>
-      </div>
+            <li>
+              <a href="{{ route('products.index') }}"
+                class="menu-item group {{ request()->is('dashboard/products*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                <svg class="menu-item-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M9 4v16M4 9h16" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Products</span>
+              </a>
+            </li>
 
-      <!-- USER -->
-      <div>
-        <h3 class="mb-4 text-xs uppercase leading-[20px] text-gray-400"
-          :class="sidebarToggle ? 'lg:hidden' : ''">User</h3>
-        <ul class="flex flex-col gap-4 mb-6">
-          <li>
-            <a href="{{ route('vendors.index') }}"
-              class="menu-item group {{ request()->is('dashboard/vendors*') ? 'menu-item-active' : 'menu-item-inactive' }}">
-              <svg class="menu-item-icon" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path d="M4 8h16v12H4z" stroke="currentColor" stroke-width="1.5"/>
-                <path d="M4 8l4-4h8l4 4" stroke="currentColor" stroke-width="1.5"/>
-              </svg>
-              <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Vendors</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('customers.index') }}"
-              class="menu-item group {{ request()->is('dashboard/customers*') ? 'menu-item-active' : 'menu-item-inactive' }}">
-              <svg class="menu-item-icon" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path d="M12 12a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="1.5"/>
-                <path d="M6 20a6 6 0 0112 0H6z" stroke="currentColor" stroke-width="1.5"/>
-              </svg>
-              <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Customers</span>
-            </a>
-          </li>
-        </ul>
-      </div>
+            <li>
+              <a href="{{ route('orders.index') }}"
+                class="menu-item group {{ request()->is('dashboard/orders*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                <svg class="menu-item-icon" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path d="M5 5h14v14H5z" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M8 8h8M8 12h5" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Orders</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      @endif
 
-      <!-- SETTINGS -->
-      <div>
-        <h3 class="mb-4 text-xs uppercase leading-[20px] text-gray-400"
-          :class="sidebarToggle ? 'lg:hidden' : ''">Settings</h3>
-        <ul class="flex flex-col gap-4 mb-6">
-          <li>
-            <a href="{{ route('profile.edit') }}"
-              class="menu-item group {{ request()->routeIs('profile.edit') ? 'menu-item-active' : 'menu-item-inactive' }}">
-              <svg class="menu-item-icon" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path d="M12 12a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="1.5"/>
-                <path d="M6 20a6 6 0 0112 0H6z" stroke="currentColor" stroke-width="1.5"/>
-              </svg>
-              <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Edit Profile</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('settings.index') }}"
-              class="menu-item group {{ request()->is('dashboard/settings*') ? 'menu-item-active' : 'menu-item-inactive' }}">
-              <svg class="menu-item-icon" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path d="M12 3v18m9-9H3" stroke="currentColor" stroke-width="1.5"/>
-              </svg>
-              <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Web Settings</span>
-            </a>
-          </li>
-        </ul>
-      </div>
+      {{-- ===== VENDOR: Products & Orders only ===== --}}
+      @if(auth()->user()?->vendor)
+        <div>
+          <h3 class="mb-4 text-xs uppercase leading-5 text-gray-400"
+            :class="sidebarToggle ? 'lg:hidden' : ''">My Business</h3>
+          <ul class="flex flex-col gap-4 mb-6">
+            <li>
+              <a href="{{ route('products.index') }}"
+                class="menu-item group {{ request()->is('dashboard/products*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                <svg class="menu-item-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M9 4v16M4 9h16" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Products</span>
+              </a>
+            </li>
+            <li>
+              <a href="{{ route('orders.index') }}"
+                class="menu-item group {{ request()->is('dashboard/orders*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                <svg class="menu-item-icon" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path d="M5 5h14v14H5z" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M8 8h8M8 12h5" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Orders</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      @endif
+
+      {{-- ===== ADMIN: USERS ===== --}}
+      @if(auth()->user()?->admin)
+        <div>
+          <h3 class="mb-4 text-xs uppercase leading-5 text-gray-400"
+            :class="sidebarToggle ? 'lg:hidden' : ''">User</h3>
+          <ul class="flex flex-col gap-4 mb-6">
+            <li>
+              <a href="{{ route('vendors.index') }}"
+                class="menu-item group {{ request()->is('dashboard/vendors*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                <svg class="menu-item-icon" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path d="M4 8h16v12H4z" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M4 8l4-4h8l4 4" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Vendors</span>
+              </a>
+            </li>
+            <li>
+              <a href="{{ route('customers.index') }}"
+                class="menu-item group {{ request()->is('dashboard/customers*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                <svg class="menu-item-icon" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path d="M12 12a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M6 20a6 6 0 0112 0H6z" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Customers</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      @endif
+
+      {{-- ===== ADMIN & VENDOR: SETTINGS ===== --}}
+      @if(auth()->user()?->admin || auth()->user()?->vendor)
+        <div>
+          <h3 class="mb-4 text-xs uppercase leading-5 text-gray-400"
+            :class="sidebarToggle ? 'lg:hidden' : ''">Settings</h3>
+          <ul class="flex flex-col gap-4 mb-6">
+            <li>
+              <a href="{{ route('profile.edit') }}"
+                class="menu-item group {{ request()->routeIs('profile.edit') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                <svg class="menu-item-icon" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path d="M12 12a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M6 20a6 6 0 0112 0H6z" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Edit Profile</span>
+              </a>
+            </li>
+
+            @if(auth()->user()?->admin)
+              <li>
+                <a href="{{ route('settings.index') }}"
+                  class="menu-item group {{ request()->is('dashboard/settings*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                  <svg class="menu-item-icon" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path d="M12 3v18m9-9H3" stroke="currentColor" stroke-width="1.5"/>
+                  </svg>
+                  <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Web Settings</span>
+                </a>
+              </li>
+            @endif
+          </ul>
+        </div>
+      @endif
+
     </nav>
   </div>
 </aside>

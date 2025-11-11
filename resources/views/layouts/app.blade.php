@@ -13,6 +13,48 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @stack('css')
+
+    {{-- Jquery --}}
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    {{-- Select2 & TinyMCE --}}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.tiny.cloud/1/{{ config('app.tinymce_api_key') }}/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <style>
+      /* Match Select2 to Tailwind input style */
+      .select2-container .select2-selection--single {
+        height: 42px !important;
+        border: 1px solid #d1d5db !important; /* gray-300 */
+        border-radius: 0.5rem !important; /* rounded-lg */
+        display: flex !important;
+        align-items: center !important;
+        background-color: white !important;
+      }
+
+      .dark .select2-container .select2-selection--single {
+        background-color: #111827 !important; /* dark:bg-gray-900 */
+        border-color: #374151 !important; /* dark:border-gray-700 */
+        color: #e5e7eb !important; /* dark:text-gray-200 */
+      }
+
+      .select2-container--default .select2-selection__rendered {
+        color: inherit !important;
+        font-size: 0.875rem !important;
+        padding-left: 10px !important;
+      }
+
+      .select2-container--default .select2-selection__arrow {
+        height: 38px !important;
+        right: 10px !important;
+      }
+
+      .dark .select2-dropdown {
+        background-color: #1f2937 !important;
+        color: #e5e7eb !important;
+      }
+    </style>
   </head>
   <body
     x-data="{ page: 'ecommerce', 'loaded': true, 'darkMode': false, 'stickyMenu': false, 'sidebarToggle': false, 'scrollTop': false }"

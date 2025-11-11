@@ -22,19 +22,21 @@ class CategoryController extends Controller
     public function index()
     {
         try {
-            $categories = $this->categories->all();
-            return view('admin.categories.index', compact('categories'));
+            $filters = request()->only(['search', 'sort_by', 'sort_dir']);
+            $categories = $this->categories->paginateWithFilters($filters, 5);
+            return view('admin.categories.index', compact('categories', 'filters'));
         } catch (Throwable $e) {
             Log::error('Failed to load categories: ' . $e->getMessage());
             return back()->withErrors('Failed to load categories.');
         }
     }
 
+
     public function create()
     {
         try {
-            $parents = $this->categories->all();
-            return view('admin.categories.create', compact('parents'));
+            $categories = $this->categories->all();
+            return view('admin.categories.create', compact('categories'));
         } catch (Throwable $e) {
             Log::error('Failed to open create form: ' . $e->getMessage());
             return back()->withErrors('Unable to open create form.');
@@ -46,7 +48,7 @@ class CategoryController extends Controller
         try {
             $this->categories->create($request->validated());
             return redirect()
-                ->route('admin.categories.index')
+                ->route('categories.index')
                 ->with('success', 'Category created successfully.');
         } catch (Throwable $e) {
             Log::error('Failed to create category: ' . $e->getMessage());
@@ -59,8 +61,8 @@ class CategoryController extends Controller
     public function edit(Category $category)
     {
         try {
-            $parents = $this->categories->all();
-            return view('admin.categories.edit', compact('category', 'parents'));
+            $categories = $this->categories->all();
+            return view('admin.categories.edit', compact('category', 'categories'));
         } catch (Throwable $e) {
             Log::error('Failed to open edit form: ' . $e->getMessage());
             return back()->withErrors('Unable to open edit form.');
@@ -72,7 +74,7 @@ class CategoryController extends Controller
         try {
             $this->categories->update($category, $request->validated());
             return redirect()
-                ->route('admin.categories.index')
+                ->route('categories.index')
                 ->with('success', 'Category updated successfully.');
         } catch (Throwable $e) {
             Log::error('Failed to update category: ' . $e->getMessage());
@@ -87,7 +89,7 @@ class CategoryController extends Controller
         try {
             $this->categories->delete($category);
             return redirect()
-                ->route('admin.categories.index')
+                ->route('categories.index')
                 ->with('success', 'Category deleted successfully.');
         } catch (Throwable $e) {
             Log::error('Failed to delete category: ' . $e->getMessage());

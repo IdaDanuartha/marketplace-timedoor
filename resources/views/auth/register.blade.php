@@ -31,7 +31,7 @@
                     @endif
 
                     <div class="grid grid-cols-1 gap-3 sm:gap-5">
-                        <button
+                        <a href="{{ route('google.redirect') }}"
                             class="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -48,8 +48,8 @@
                                     d="M10.1789 4.63331C11.8554 4.63331 12.9864 5.34303 13.6312 5.93612L16.1511 3.525C14.6035 2.11528 12.5895 1.25 10.1789 1.25C6.68676 1.25 3.67088 3.21387 2.20264 6.07218L5.08953 8.26943C5.81381 6.15972 7.81776 4.63331 10.1789 4.63331Z"
                                     fill="#EB4335" />
                             </svg>
-                            Sign up with Google
-                        </button>
+                            Sign Up with Google
+                        </a>
                     </div>
                     <div class="relative py-3 sm:py-5">
                         <div class="absolute inset-0 flex items-center">

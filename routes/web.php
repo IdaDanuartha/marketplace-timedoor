@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\WebSettingController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -35,6 +36,14 @@ Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
     return back()->with('status', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+Route::prefix('auth')->group(function () {
+    Route::get('google/redirect', [SocialiteController::class, 'redirect'])->name('google.redirect');
+    Route::get('google/callback', [SocialiteController::class, 'callback'])->name('google.callback');
+    Route::get('google/choose-role', [SocialiteController::class, 'chooseRole'])->name('google.chooseRole');
+    Route::post('google/complete-register', [SocialiteController::class, 'completeRegister'])->name('google.completeRegister');
+});
+
 
 Route::middleware(['auth'])
     ->prefix('dashboard')

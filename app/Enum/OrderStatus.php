@@ -2,13 +2,13 @@
 
 namespace App\Enum;
 
-enum OrderStatus
+enum OrderStatus: string
 {
-    case PENDING;
-    case PROCESSING;
-    case SHIPPED;
-    case DELIVERED;
-    case CANCELED;
+    case PENDING = 'PENDING';
+    case PROCESSING = 'PROCESSING';
+    case SHIPPED = 'SHIPPED';
+    case DELIVERED = 'DELIVERED';
+    case CANCELED = 'CANCELED';
 
     public function label(): string
     {

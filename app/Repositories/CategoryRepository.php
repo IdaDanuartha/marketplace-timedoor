@@ -16,6 +16,26 @@ class CategoryRepository implements CategoryRepositoryInterface
         return Category::with('parent')->latest()->get();
     }
 
+    public function paginateWithFilters(array $filters, int $perPage = 10)
+    {
+        $query = Category::with(['parent', 'children']);
+
+        if (!empty($filters['search'])) {
+            $search = trim($filters['search']);
+
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+
+        $sortBy = $filters['sort_by'] ?? 'created_at';
+        $sortDir = $filters['sort_dir'] ?? 'desc';
+
+        return $query->orderBy($sortBy, $sortDir)
+                    ->paginate($perPage)
+                    ->appends($filters);
+    }
+
     public function find($id): ?Category
     {
         return Category::find($id);

@@ -59,6 +59,27 @@ class AuthRepository implements AuthRepositoryInterface
         }
     }
 
+    public function registerGoogleUser(array $googleUser, string $role): User
+    {
+        $user = User::create([
+            'username' => explode('@', $googleUser['email'])[0],
+            'email' => $googleUser['email'],
+            'password' => bcrypt(str()->random(12)),
+            'profile_image' => $googleUser['avatar'],
+            'google_id' => $googleUser['google_id'],
+            'email_verified_at' => now(),
+        ]);
+
+        if ($role === 'vendor') {
+            $user->vendor()->create(['name' => $googleUser['name']]);
+        } else {
+            $user->customer()->create(['name' => $googleUser['name']]);
+        }
+
+        return $user;
+    }
+
+
     public function logout(): void
     {
         Auth::logout();

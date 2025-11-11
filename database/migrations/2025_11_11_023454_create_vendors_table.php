@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('name');
+            $table->boolean('is_approved')->default(false);
+            $table->text('address')->nullable();
             $table->timestamps();
 
             $table->index(['user_id', 'name']);

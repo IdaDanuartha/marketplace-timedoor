@@ -13,6 +13,8 @@ class VendorFactory extends Factory
     {
         return [
             'name' => fake()->company(),
+            'is_approved' => fake()->boolean(30),
+            'address' => fake()->address(),
         ];
     }
 }
