@@ -87,19 +87,19 @@
     @if($user->admin)
       <div>
         <label class="block text-sm font-medium mb-1">Name</label>
-        <input type="text" name="name" value="{{ old('name', $user->admin->name) }}"
+        <input type="text" name="name" value="{{ old('name', $user->admin->name) }}" placeholder="Full Name"
           class="w-full border rounded-lg px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-white">
       </div>
     @elseif($user->vendor)
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">Vendor Name</label>
-          <input type="text" name="name" value="{{ old('name', $user->vendor->name) }}"
+          <input type="text" name="name" value="{{ old('name', $user->vendor->name) }}" placeholder="Vendor Name"
             class="w-full border rounded-lg px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-white">
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">Address</label>
-          <textarea name="address" rows="3"
+          <textarea name="address" rows="3" placeholder="Vendor Address"
             class="w-full border rounded-lg px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-white">{{ old('address', $user->vendor->address) }}</textarea>
         </div>
       </div>
@@ -107,12 +107,12 @@
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">Customer Name</label>
-          <input type="text" name="name" value="{{ old('name', $user->customer->name) }}"
+          <input type="text" name="name" value="{{ old('name', $user->customer->name) }}" placeholder="Full Name"
             class="w-full border rounded-lg px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-white">
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">Phone</label>
-          <input type="text" name="phone" value="{{ old('phone', $user->customer->phone) }}"
+          <input type="text" name="phone" value="{{ old('phone', $user->customer->phone) }}" placeholder="e.g., +6281234567890"
             class="w-full border rounded-lg px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-white">
         </div>
       </div>

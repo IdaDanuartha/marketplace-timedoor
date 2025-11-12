@@ -170,49 +170,7 @@
   </div>
 
   <!-- ORDER LOG ACTIVITY -->
-  <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
-    <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Order Activity Log</h2>
-    <?php if($orderLogs->isEmpty()): ?>
-      <p class="text-gray-500 text-sm">No recent activities.</p>
-    <?php else: ?>
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-sm text-left border-separate border-spacing-y-2">
-          <thead class="text-gray-600 dark:text-gray-400 uppercase text-xs">
-            <tr>
-              <th class="py-2 px-3">Order</th>
-              <th class="py-2 px-3">Product</th>
-              <th class="py-2 px-3">Qty</th>
-              <th class="py-2 px-3">Status</th>
-              <th class="py-2 px-3">Updated</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php $__currentLoopData = $orderLogs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $log): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-              <tr class="bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-                <td class="py-2 px-3 font-medium text-gray-800 dark:text-white"><?php echo e($log['order_code']); ?></td>
-                <td class="py-2 px-3 text-gray-600 dark:text-gray-300"><?php echo e($log['product']); ?></td>
-                <td class="py-2 px-3 text-gray-600 dark:text-gray-300"><?php echo e($log['qty']); ?></td>
-                <td class="py-2 px-3">
-                  <span class="px-2 py-1 rounded-full text-xs font-medium
-                    class="<?php echo \Illuminate\Support\Arr::toCssClasses([
-                      'bg-yellow-100 text-yellow-700' => $log['status'] === 'PENDING',
-                      'bg-blue-100 text-blue-700' => $log['status'] === 'PROCESSING',
-                      'bg-purple-100 text-purple-700' => $log['status'] === 'SHIPPED',
-                      'bg-green-100 text-green-700' => $log['status'] === 'DELIVERED',
-                      'bg-red-100 text-red-700' => $log['status'] === 'CANCELED',
-                    ]); ?>"">
-                    <?php echo e($log['status'] ?? '-'); ?>
-
-                  </span>
-                </td>
-                <td class="py-2 px-3 text-gray-600 dark:text-gray-300"><?php echo e($log['updated_at']); ?></td>
-              </tr>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-          </tbody>
-        </table>
-      </div>
-    <?php endif; ?>
-  </div>
+  
 </div>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /Users/gusde/Documents/laravel/marketplace-timedoor/resources/views/customer/dashboard/index.blade.php ENDPATH**/ ?>

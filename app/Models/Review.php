@@ -9,9 +9,9 @@ class Review extends BaseModel
 {
     protected $guarded = [];
 
-    public function user(): BelongsTo
+    public function customer(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Customer::class);
     }
 
     public function product(): BelongsTo

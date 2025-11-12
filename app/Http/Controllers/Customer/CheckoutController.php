@@ -111,7 +111,7 @@ class CheckoutController extends Controller
     {
         try {
             $order->update([
-                'status' => OrderStatus::DELIVERED,
+                'status' => OrderStatus::PROCESSING,
                 'payment_status' => 'PAID',
             ]);
 

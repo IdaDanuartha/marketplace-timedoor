@@ -67,6 +67,11 @@ class AddressRepository implements AddressRepositoryInterface
                 abort(403, 'You are not authorized to update this address.');
             }
 
+            if(isset($data['is_default']) && $data['is_default']) {
+                $this->setDefault($address, $customer->user_id);
+                unset($data['is_default']);
+            }
+
             return $address->update($data);
         } catch (Exception $e) {
             Log::error('Failed to update address (ID: ' . $address->id . '): ' . $e->getMessage());

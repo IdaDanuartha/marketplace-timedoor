@@ -20,6 +20,7 @@ class UpdateAddressRequest extends FormRequest
             'postal_code' => 'nullable|string|max:20',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
+            'is_default' => 'sometimes|boolean',
         ];
     }
 

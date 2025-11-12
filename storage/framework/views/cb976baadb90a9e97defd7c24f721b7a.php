@@ -16,7 +16,7 @@
         />
       </span>
       <img
-        class="w-18 rounded-full object-cover border"
+        class="w-18 rounded-full object-cover border logo-icon"
         :class="sidebarToggle ? 'lg:block' : 'hidden'"
         src="<?php echo e(setting('logo_icon', asset('images/placeholder-image.svg'))); ?>"
         alt="Logo"

@@ -22,8 +22,8 @@ class ProfileAddressController extends Controller
             $addresses = $this->addresses->allForUser($user->id);
             return view('profile.addresses.index', compact('addresses', 'user'));
         } catch (Exception $e) {
-            Log::error('Gagal memuat daftar alamat: ' . $e->getMessage());
-            return back()->withErrors('Terjadi kesalahan saat memuat daftar alamat.');
+            Log::error('Failed to load address list: ' . $e->getMessage());
+            return back()->withErrors('Failed to load address list.');
         }
     }
 
@@ -36,9 +36,9 @@ class ProfileAddressController extends Controller
     {
         try {
             $this->addresses->create($request->validated(), Auth::id());
-            return redirect()->route('profile.addresses.index')->with('success', 'Alamat berhasil ditambahkan.');
+            return redirect()->route('profile.addresses.index')->with('success', 'Address added successfully.');
         } catch (Exception $e) {
-            return back()->withInput()->withErrors('Gagal menambahkan alamat.');
+            return back()->withInput()->withErrors('Failed to add address.');
         }
     }
 
@@ -48,7 +48,7 @@ class ProfileAddressController extends Controller
             $address = $this->addresses->findOrFail($id);
             return view('profile.addresses.show', compact('address'));
         } catch (Exception $e) {
-            return back()->withErrors('Gagal menampilkan detail alamat.');
+            return back()->withErrors('Failed to display address details.');
         }
     }
 
@@ -58,7 +58,7 @@ class ProfileAddressController extends Controller
             $address = $this->addresses->findOrFail($id);
             return view('profile.addresses.edit', compact('address'));
         } catch (Exception $e) {
-            return back()->withErrors('Tidak dapat membuka form edit alamat.');
+            return back()->withErrors('Failed to open edit address form.');
         }
     }
 
@@ -67,9 +67,9 @@ class ProfileAddressController extends Controller
         try {
             $address = $this->addresses->findOrFail($id);
             $this->addresses->update($address, $request->validated());
-            return redirect()->route('profile.addresses.index')->with('success', 'Alamat berhasil diperbarui.');
+            return redirect()->route('profile.addresses.index')->with('success', 'Address updated successfully.');
         } catch (Exception $e) {
-            return back()->withInput()->withErrors('Gagal memperbarui alamat.');
+            return back()->withInput()->withErrors('Failed to update address.');
         }
     }
 
@@ -78,9 +78,9 @@ class ProfileAddressController extends Controller
         try {
             $address = $this->addresses->findOrFail($id);
             $this->addresses->delete($address);
-            return redirect()->route('profile.addresses.index')->with('success', 'Alamat berhasil dihapus.');
+            return redirect()->route('profile.addresses.index')->with('success', 'Address deleted successfully.');
         } catch (Exception $e) {
-            return back()->withErrors('Gagal menghapus alamat.');
+            return back()->withErrors('Failed to delete address.');
         }
     }
 
@@ -89,9 +89,9 @@ class ProfileAddressController extends Controller
         try {
             $address = $this->addresses->findOrFail($id);
             $this->addresses->setDefault($address, Auth::id());
-            return back()->with('success', 'Alamat utama berhasil diperbarui.');
+            return back()->with('success', 'Default address updated successfully.');
         } catch (Exception $e) {
-            return back()->withErrors('Gagal mengatur alamat utama.');
+            return back()->withErrors('Failed to set default address.');
         }
     }
 }

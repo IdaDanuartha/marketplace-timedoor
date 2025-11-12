@@ -35,4 +35,9 @@ class Customer extends BaseModel
     {
         return $this->belongsToMany(Product::class, 'favorites')->withTimestamps();
     }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
 }

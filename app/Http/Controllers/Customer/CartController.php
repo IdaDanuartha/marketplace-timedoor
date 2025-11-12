@@ -99,4 +99,27 @@ class CartController extends Controller
 
         return redirect()->route('shop.checkout.index');
     }
+
+    public function buyNow(Product $product)
+    {
+        $customer = Auth::user()->customer;
+
+        $cart = Cart::firstOrCreate(
+            ['customer_id' => $customer->id],
+            ['total_price' => 0]
+        );
+
+        $cart->items()->delete();
+
+        $cart->items()->create([
+            'product_id' => $product->id,
+            'qty' => 1,
+            'subtotal' => $product->price,
+        ]);
+
+        $cart->update(['total_price' => $product->price]);
+
+        return redirect()->route('shop.checkout.index')->with('success', 'Proceed to checkout.');
+    }
+
 }

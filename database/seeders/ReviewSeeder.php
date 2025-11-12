@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Customer;
 use Illuminate\Database\Seeder;
 use App\Models\Review;
 use App\Models\User;
@@ -13,7 +14,7 @@ class ReviewSeeder extends Seeder
     {
         $this->command->info('Creating 1000 reviews...');
 
-        $userIds = User::whereHas('customer')->pluck('id')->toArray();
+        $customerIds = Customer::pluck('id')->toArray();
         $productIds = Product::pluck('id')->toArray();
         
         // Create reviews in chunks for efficiency
@@ -25,7 +26,7 @@ class ReviewSeeder extends Seeder
             
             for ($j = 0; $j < $perChunk; $j++) {
                 $reviewsData[] = Review::factory()->make([
-                    'user_id' => $userIds[array_rand($userIds)],
+                    'customer_id' => $customerIds[array_rand($customerIds)],
                     'product_id' => $productIds[array_rand($productIds)],
                 ])->toArray();
             }
