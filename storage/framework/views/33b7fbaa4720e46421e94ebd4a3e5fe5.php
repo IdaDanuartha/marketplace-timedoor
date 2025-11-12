@@ -147,7 +147,7 @@
             <div class="flex items-center justify-center z-1">
                 <div class="flex flex-col items-center max-w-xs">
                     <a href="/" class="block mb-4">
-                        <img src="/images/logo/auth-logo.svg" alt="Logo" />
+                        <img src="<?php echo e(setting('site_logo', asset('images/placeholder-image.svg'))); ?>" class="w-30 rounded-md" alt="Logo" />
                     </a>
                     <p class="text-center text-gray-400 dark:text-white/60">
                         Welcome back! Manage your account and continue where you left off.

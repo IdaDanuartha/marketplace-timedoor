@@ -113,6 +113,78 @@
         </div>
       @endif
 
+      {{-- ===== CUSTOMER: Shopping, Cart, Orders, Reviews, Wishlist ===== --}}
+      @if(auth()->user()?->customer)
+        <div>
+          <h3 class="mb-4 text-xs uppercase leading-5 text-gray-400"
+            :class="sidebarToggle ? 'lg:hidden' : ''">Shopping</h3>
+          <ul class="flex flex-col gap-4 mb-6">
+
+            {{-- View Products --}}
+            <li>
+              <a href="{{ route('shop.products.index') }}"
+                class="menu-item group {{ request()->is('dashboard/shop') || request()->is('dashboard/shop/products*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                <svg class="menu-item-icon" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M4 9h16M9 4v16" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Products</span>
+              </a>
+            </li>
+
+            {{-- Wishlist --}}
+            <li>
+              <a href="{{ route('shop.wishlist.index') }}"
+                class="menu-item group {{ request()->is('dashboard/shop/wishlist*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="menu-item-icon" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Wishlist</span>
+              </a>
+            </li>
+
+            {{-- Cart --}}
+            <li>
+              <a href="{{ route('shop.cart.index') }}"
+                class="menu-item group {{ request()->is('dashboard/shop/cart*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="menu-item-icon" width="24" height="24" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="9" cy="21" r="1"/>
+                  <circle cx="20" cy="21" r="1"/>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.98-1.72L23 6H6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Cart</span>
+              </a>
+            </li>
+
+            {{-- Orders --}}
+            <li>
+              <a href="{{ route('shop.orders.index') }}"
+                class="menu-item group {{ request()->is('dashboard/shop/orders*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                <svg class="menu-item-icon" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path d="M5 5h14v14H5z" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M8 8h8M8 12h5" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">My Orders</span>
+              </a>
+            </li>
+
+            {{-- Reviews --}}
+            <li>
+              <a href="{{ route('shop.reviews.index') }}"
+                class="menu-item group {{ request()->is('dashboard/shop/reviews*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="menu-item-icon" width="20" height="20" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                </svg>
+                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">My Reviews</span>
+              </a>
+            </li>
+
+          </ul>
+        </div>
+      @endif
+
       {{-- ===== ADMIN: USERS ===== --}}
       @if(auth()->user()?->admin)
         <div>
@@ -155,6 +227,15 @@
                 <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Edit Profile</span>
               </a>
             </li>
+            @if (auth()->user()?->customer)
+              <li>
+                <a href="{{ route('profile.addresses.index') }}"
+                  class="menu-item group {{ request()->routeIs('profile.addresses.index') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="menu-item-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin-house-icon lucide-map-pin-house"><path d="M15 22a1 1 0 0 1-1-1v-4a1 1 0 0 1 .445-.832l3-2a1 1 0 0 1 1.11 0l3 2A1 1 0 0 1 22 17v4a1 1 0 0 1-1 1z"/><path d="M18 10a8 8 0 0 0-16 0c0 4.993 5.539 10.193 7.399 11.799a1 1 0 0 0 .601.2"/><path d="M18 22v-3"/><circle cx="10" cy="10" r="3"/></svg>
+                  <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Manage Addresses</span>
+                </a>
+              </li>
+            @endif
 
             @if(auth()->user()?->admin)
               <li>

@@ -164,7 +164,7 @@ function addressManager() {
         this.addresses[index].latitude = lat.toFixed(8);
         this.addresses[index].longitude = lng.toFixed(8);
         try {
-          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=id`);
           const data = await res.json();
           if (data.display_name) this.addresses[index].full_address = data.display_name;
           if (data.address?.postcode) this.addresses[index].postal_code = data.address.postcode;

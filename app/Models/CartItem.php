@@ -14,4 +14,9 @@ class CartItem extends BaseModel
         return $this->belongsTo(Cart::class);
     }
 
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
+
 }

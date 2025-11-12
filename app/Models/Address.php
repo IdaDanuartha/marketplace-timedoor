@@ -13,7 +13,7 @@ class Address extends BaseModel
         'is_default' => 'boolean',
     ];
 
-    public function customer(): BelongsToMany
+    public function customers(): BelongsToMany
     {
         return $this->belongsToMany(Customer::class, 'customer_addresses');
     }

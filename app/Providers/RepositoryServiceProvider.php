@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Interfaces\AddressRepositoryInterface;
 use App\Repositories\AuthRepository;
 use App\Interfaces\AuthRepositoryInterface;
 use App\Repositories\CategoryRepository;
@@ -12,6 +13,7 @@ use App\Interfaces\ProductRepositoryInterface;
 use App\Interfaces\ProfileRepositoryInterface;
 use App\Interfaces\VendorRepositoryInterface;
 use App\Interfaces\WebSettingRepositoryInterface;
+use App\Repositories\AddressRepository;
 use App\Repositories\CustomerRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
@@ -34,6 +36,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(CustomerRepositoryInterface::class, CustomerRepository::class);
         $this->app->bind(WebSettingRepositoryInterface::class, WebSettingRepository::class);
         $this->app->bind(ProfileRepositoryInterface::class, ProfileRepository::class);
+        $this->app->bind(AddressRepositoryInterface::class, AddressRepository::class);
         $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
     }
 

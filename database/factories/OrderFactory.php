@@ -25,7 +25,7 @@ class OrderFactory extends Factory
                 OrderStatus::SHIPPED,
                 OrderStatus::DELIVERED,
                 OrderStatus::CANCELED,
-            ]), // Mostly processing/shipped
+            ]),
             'created_at' => fake()->dateTimeBetween('-6 months', 'now'),
             'updated_at' => now(),
         ];

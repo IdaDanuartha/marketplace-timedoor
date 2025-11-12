@@ -60,7 +60,7 @@
                         </div>
                     </div>
 
-                    <form method="POST" action="{{ route('register.post') }}" class="space-y-5">
+                    <form method="POST" action="{{ route('register.post') }}" class="space-y-5" x-data="{ loading: false }" @submit.prevent="loading = true; $el.submit()">
                         @csrf
                         
                         <div>
@@ -163,8 +163,9 @@
                         <!-- Submit -->
                         <div>
                             <button type="submit"
-                                class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
-                                Sign Up
+                                x-bind:disabled="loading"
+                                x-text="loading ? 'Creating...' : 'Sign Up'"
+                                class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600 disabled:opacity-60 disabled:cursor-not-allowed transition">
                             </button>
                         </div>
                     </form>
@@ -185,7 +186,7 @@
             <div class="flex items-center justify-center z-1">
                 <div class="flex flex-col items-center max-w-xs">
                     <a href="/" class="block mb-4">
-                        <img src="/images/logo/auth-logo.svg" alt="Logo" />
+                        <img src="{{ setting('site_logo', asset('images/placeholder-image.svg')) }}" class="w-30 rounded-md" alt="Logo" />
                     </a>
                     <p class="text-center text-gray-400 dark:text-white/60">
                         Join our marketplace — choose to sell or shop freely.

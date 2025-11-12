@@ -10,6 +10,13 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\Customer\CartController;
+use App\Http\Controllers\Customer\CheckoutController;
+use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
+use App\Http\Controllers\Customer\ReviewController;
+use App\Http\Controllers\Customer\ShopController;
+use App\Http\Controllers\Customer\WishlistController;
+use App\Http\Controllers\ProfileAddressController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\WebSettingController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -81,4 +88,40 @@ Route::middleware(['auth'])
         Route::put('profile/update', [ProfileController::class, 'update'])->name('profile.update');
         Route::get('settings', [WebSettingController::class, 'index'])->name('settings.index');
         Route::post('settings', [WebSettingController::class, 'update'])->name('settings.update');
+
+        Route::name('profile.')
+            ->prefix('profile')
+            ->controller(ProfileAddressController::class)
+            ->group(function () {
+                Route::resource('/addresses', ProfileAddressController::class);
+                Route::patch('addresses/{address}/default', [ProfileAddressController::class, 'setDefault'])->name('addresses.setDefault');
+            });
+
+        Route::prefix('shop')->name('shop.')->group(function () {
+            Route::get('/', [ShopController::class, 'index'])->name('products.index');
+            Route::get('/products/{product}', [ShopController::class, 'show'])->name('products.show');
+            Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+            Route::post('/cart/add/{product}', [CartController::class, 'store'])->name('cart.add');
+            Route::post('/buy-now/{product}', [CartController::class, 'buyNow'])->name('cart.buyNow');
+            Route::patch('/cart/{item}', [CartController::class, 'update'])->name('cart.update');
+            Route::delete('/cart/{item}', [CartController::class, 'destroy'])->name('cart.destroy');
+            Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+            Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+
+            Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders.index');
+            Route::get('/orders/{order}', [CustomerOrderController::class, 'show'])->name('orders.show');
+            Route::get('/orders/{order}/pay', [CustomerOrderController::class, 'pay'])->name('orders.pay');
+            Route::patch('/orders/{order}/cancel', [CustomerOrderController::class, 'cancel'])->name('orders.cancel');
+
+            Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+            Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+
+            Route::post('/wishlist/{product}', [WishlistController::class, 'store'])->name('wishlist.store');
+            Route::delete('/wishlist/{product}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
+
+            Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+            Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+            Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
+        });
+
     });

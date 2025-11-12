@@ -1,0 +1,93 @@
+@extends('layouts.app')
+@section('title', 'Checkout')
+
+@section('content')
+<div class="max-w-5xl mx-auto py-8 space-y-8">
+  <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Checkout</h1>
+
+  <form action="{{ route('shop.checkout.process') }}" method="POST">
+    @csrf
+
+    {{-- Address Section --}}
+    <div class="p-6 border rounded-lg bg-white dark:bg-gray-900">
+      <h2 class="font-semibold text-gray-800 dark:text-white mb-4">Shipping Address</h2>
+
+      @if($addresses->isEmpty())
+        <div class="text-sm text-gray-500 dark:text-gray-400">
+          You don’t have any saved addresses yet. 
+          <a href="{{ route('profile.addresses.index') }}" class="text-blue-600 hover:underline">Add one here</a>.
+        </div>
+      @else
+        <div class="grid sm:grid-cols-2 gap-4">
+          @foreach($addresses as $address)
+            <label 
+              class="relative flex flex-col justify-between border rounded-lg p-4 cursor-pointer transition 
+                    hover:border-blue-500 dark:border-gray-700 dark:hover:border-blue-500
+                    {{ $address->is_default ? 'border-blue-600 ring-2 ring-blue-400' : 'border-gray-300' }}">
+              <input 
+                type="radio" 
+                name="address_id" 
+                value="{{ $address->id }}" 
+                class="absolute top-3 right-3 w-4 h-4 text-blue-600 focus:ring-blue-500"
+                {{ $address->is_default ? 'checked' : '' }} 
+                required
+              />
+              
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  <span class="font-semibold text-gray-800 dark:text-gray-100">{{ $address->label }}</span>
+                  @if($address->is_default)
+                    <span class="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                      Default
+                    </span>
+                  @endif
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-300 leading-snug">{{ $address->full_address }}</p>
+                @if($address->additional_information)
+                  <p class="text-xs text-gray-500 dark:text-gray-400">{{ $address->additional_information }}</p>
+                @endif
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  Postal Code: {{ $address->postal_code ?? '-' }}
+                </p>
+              </div>
+            </label>
+          @endforeach
+        </div>
+      @endif
+    </div>
+
+    {{-- Cart Summary --}}
+    <div class="p-6 border rounded-lg bg-white dark:bg-gray-900 space-y-3">
+      <h2 class="font-semibold mb-3 text-gray-800 dark:text-white">Order Summary</h2>
+      
+      @foreach($cart->items as $item)
+        <div class="flex justify-between items-center text-sm text-gray-700 dark:text-gray-300">
+          <span class="truncate">{{ $item->product->name }} × {{ $item->qty }}</span>
+          <span>Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
+        </div>
+      @endforeach
+
+      <hr class="my-3 border-gray-300 dark:border-gray-700">
+
+      <div class="flex justify-between text-sm text-gray-700 dark:text-gray-300">
+        <span>Subtotal</span><span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
+      </div>
+      <div class="flex justify-between text-sm text-gray-700 dark:text-gray-300">
+        <span>Shipping</span><span>Rp {{ number_format($shippingCost, 0, ',', '.') }}</span>
+      </div>
+      <div class="flex justify-between font-semibold text-lg text-gray-800 dark:text-white">
+        <span>Total</span><span>Rp {{ number_format($grandTotal, 0, ',', '.') }}</span>
+      </div>
+    </div>
+
+    {{-- Submit --}}
+    <div class="flex justify-end">
+      <button 
+        type="submit" 
+        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium mt-4">
+        Proceed to Payment
+      </button>
+    </div>
+  </form>
+</div>
+@endsection

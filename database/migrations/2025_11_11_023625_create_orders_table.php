@@ -16,12 +16,17 @@ return new class extends Migration
             $table->id();
             $table->string('code');
             $table->foreignId('customer_id')->constrained()->onDelete('cascade');
+            $table->foreignId('address_id')->constrained()->onDelete('cascade');
             $table->bigInteger('total_price');
-            $table->integer('shipping_cost');
-            $table->string('status')->default(OrderStatus::PENDING);
+            $table->integer('shipping_cost')->default(0);
+            $table->bigInteger('grand_total');
+            $table->string('status')->default(OrderStatus::PENDING); // pending, paid, failed, shipped, completed
+            $table->string('payment_method')->nullable(); // e.g. 'gopay', 'bank_transfer'
+            $table->string('payment_status')->default('unpaid');
+            $table->string('midtrans_transaction_id')->nullable();
             $table->timestamps();
 
-            $table->index(['code', 'customer_id', 'status', 'total_price', 'shipping_cost']);
+            $table->index(['code', 'status', 'total_price', 'shipping_cost', 'grand_total']);
             $table->softDeletes();
         });
     }

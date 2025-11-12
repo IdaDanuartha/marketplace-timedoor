@@ -8,7 +8,7 @@
   $isVendor = $user->vendor ? true : false;
 @endphp
 
-<div class="grid grid-cols-12 gap-4 md:gap-6">
+<div x-data="{ isModalOpen: false, title: '', deleteUrl: '' }" x-cloak class="grid grid-cols-12 gap-4 md:gap-6">
   <div class="col-span-12">
     {{-- Flash & Errors --}}
     @if ($errors->any())
