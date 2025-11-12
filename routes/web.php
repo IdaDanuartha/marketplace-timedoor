@@ -57,5 +57,6 @@ Route::middleware(['auth'])
         Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');
         Route::get('profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('profile/update', [ProfileController::class, 'update'])->name('profile.update');
-        Route::resource('settings', WebSettingController::class);
+        Route::get('settings', [WebSettingController::class, 'index'])->name('settings.index');
+        Route::post('settings', [WebSettingController::class, 'update'])->name('settings.update');
     });

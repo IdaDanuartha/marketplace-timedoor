@@ -146,8 +146,9 @@
     </div>
   </div>
 </div>
+<?php $__env->stopSection(); ?>
 
-
+<?php $__env->startPush('js'); ?>
 <script>
   function orderForm() {
     return {
@@ -211,5 +212,5 @@
     };
   }
 </script>
-<?php $__env->stopSection(); ?>
+<?php $__env->stopPush(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /Users/gusde/Documents/laravel/marketplace-timedoor/resources/views/admin/orders/create.blade.php ENDPATH**/ ?>

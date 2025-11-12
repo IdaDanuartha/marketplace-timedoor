@@ -5,17 +5,20 @@
   <!-- SIDEBAR HEADER -->
   <div
     :class="sidebarToggle ? 'justify-center' : 'justify-between'"
-    class="flex items-center gap-2 pt-8 sidebar-header pb-7"
+    class="flex items-center justify-center gap-2 pt-8 pb-7"
   >
     <a href="{{ route('dashboard.index') }}">
       <span class="logo" :class="sidebarToggle ? 'hidden' : ''">
-        <img class="dark:hidden" src="/images/logo/logo.svg" alt="Logo" />
-        <img class="hidden dark:block" src="/images/logo/logo-dark.svg" alt="Logo" />
+        <img 
+          class="w-24 rounded-full object-cover border"
+          src="{{ setting('site_logo', asset('images/placeholder-image.svg')) }}" 
+          alt="{{ setting('site_name', 'Marketplace Timedoor') }}" 
+        />
       </span>
       <img
         class="logo-icon"
         :class="sidebarToggle ? 'lg:block' : 'hidden'"
-        src="/images/logo/logo-icon.svg"
+        src="{{ setting('logo_icon', asset('images/placeholder-image.svg')) }}"
         alt="Logo"
       />
     </a>

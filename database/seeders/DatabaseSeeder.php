@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             OrderSeeder::class,
             ReviewSeeder::class,
+            WebSettingSeeder::class,
         ]);
 
         $this->command->info('✓ Database seeding completed successfully!');
@@ -36,5 +37,6 @@ class DatabaseSeeder extends Seeder
         $this->command->info('   - 500 Products');
         $this->command->info('   - 500 Orders (with items)');
         $this->command->info('   - 1000 Reviews');
+        $this->command->info('   - 1 Web Setting');
     }
 }

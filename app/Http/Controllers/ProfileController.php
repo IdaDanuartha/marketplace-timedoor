@@ -2,31 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\Profile\UpdateProfileRequest;
+use App\Interfaces\ProfileRepositoryInterface;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+    public function __construct(protected readonly ProfileRepositoryInterface $repository) {}
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit()
     {
-        //
+        $user = Auth::user();
+        return view('profile.edit', compact('user'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request)
+    public function update(UpdateProfileRequest $request)
     {
-        //
+        $this->repository->update($request->validated());
+
+        return redirect()->route('profile.edit')
+            ->with('success', 'Profile updated successfully!');
     }
 }

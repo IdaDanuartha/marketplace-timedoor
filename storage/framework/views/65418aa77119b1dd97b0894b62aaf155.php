@@ -7,10 +7,17 @@
       content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>
-      <?php echo $__env->yieldContent('title', 'Dashboard'); ?> | <?php echo e(config('app.name')); ?>
+    <title><?php echo $__env->yieldContent('title', 'Dashboard'); ?> | <?php echo e(setting('site_name', 'Marketplace Timedoor')); ?></title>
+    <meta name="description" content="<?php echo e(setting('meta_description', 'A trusted digital marketplace for tech and creative products.')); ?>">
+    <meta name="keywords" content="<?php echo e(setting('meta_keywords', 'marketplace, timedoor, ecommerce, digital')); ?>">
+    <meta name="theme-color" content="#2563eb">
 
-    </title>
+    <link rel="icon" type="image/x-icon" href="<?php echo e(setting('favicon', asset('images/placeholder-image.svg'))); ?>">
+    <meta property="og:title" content="<?php echo e(setting('site_name', 'Marketplace Timedoor')); ?>">
+    <meta property="og:description" content="<?php echo e(setting('meta_description', 'A trusted digital marketplace for tech and creative products.')); ?>">
+    <meta property="og:image" content="<?php echo e(setting('og_image', asset('images/placeholder-image.svg'))); ?>">
+    <meta property="og:type" content="website">
+    
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
 
     <?php echo $__env->yieldPushContent('css'); ?>

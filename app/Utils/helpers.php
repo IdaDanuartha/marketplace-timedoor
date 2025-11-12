@@ -16,3 +16,9 @@ if (! function_exists('profile_image')) {
         return asset('storage/' . ltrim($path, '/'));
     }
 }
+
+if (!function_exists('setting')) {
+    function setting(string $key, $default = null) {
+        return \App\Models\WebSetting::get($key, $default);
+    }
+}

@@ -68,7 +68,7 @@
       <!-- Hamburger Toggle BTN -->
 
       <a href="index.html" class="lg:hidden">
-        <img class="dark:hidden" src="./images/logo/logo.svg" alt="Logo" />
+        <img class="dark:hidden" src="./images/logo/new-logo.png" alt="Logo" />
         <img
           class="hidden dark:block"
           src="./images/logo/logo-dark.svg"

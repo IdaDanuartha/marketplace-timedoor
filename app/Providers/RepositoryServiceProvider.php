@@ -9,11 +9,15 @@ use App\Interfaces\CategoryRepositoryInterface;
 use App\Interfaces\CustomerRepositoryInterface;
 use App\Interfaces\OrderRepositoryInterface;
 use App\Interfaces\ProductRepositoryInterface;
+use App\Interfaces\ProfileRepositoryInterface;
 use App\Interfaces\VendorRepositoryInterface;
+use App\Interfaces\WebSettingRepositoryInterface;
 use App\Repositories\CustomerRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
+use App\Repositories\ProfileRepository;
 use App\Repositories\VendorRepository;
+use App\Repositories\WebSettingRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -28,6 +32,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
         $this->app->bind(VendorRepositoryInterface::class, VendorRepository::class);
         $this->app->bind(CustomerRepositoryInterface::class, CustomerRepository::class);
+        $this->app->bind(WebSettingRepositoryInterface::class, WebSettingRepository::class);
+        $this->app->bind(ProfileRepositoryInterface::class, ProfileRepository::class);
         $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
     }
 

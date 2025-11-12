@@ -7,9 +7,17 @@
       content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>
-      @yield('title', 'Dashboard') | {{ config('app.name') }}
-    </title>
+    <title>@yield('title', 'Dashboard') | {{ setting('site_name', 'Marketplace Timedoor') }}</title>
+    <meta name="description" content="{{ setting('meta_description', 'A trusted digital marketplace for tech and creative products.') }}">
+    <meta name="keywords" content="{{ setting('meta_keywords', 'marketplace, timedoor, ecommerce, digital') }}">
+    <meta name="theme-color" content="#2563eb">
+
+    <link rel="icon" type="image/x-icon" href="{{ setting('favicon', asset('images/placeholder-image.svg')) }}">
+    <meta property="og:title" content="{{ setting('site_name', 'Marketplace Timedoor') }}">
+    <meta property="og:description" content="{{ setting('meta_description', 'A trusted digital marketplace for tech and creative products.') }}">
+    <meta property="og:image" content="{{ setting('og_image', asset('images/placeholder-image.svg')) }}">
+    <meta property="og:type" content="website">
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @stack('css')
