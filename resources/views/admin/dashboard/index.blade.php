@@ -10,9 +10,13 @@
         <x-metric-group-dashboard :metrics="$metrics" />
         <!-- Metric Group One -->
         
-        <!-- ====== Chart One Start -->
-        <x-chart.monthly-sales-chart />
-        <!-- ====== Chart One End -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- ====== Chart One Start -->
+            <x-chart.monthly-sales-chart />
+            <x-chart.top-selling-chart />
+            <!-- ====== Chart One End -->
+        </div>
+
         </div>
         <div class="col-span-12">
         <!-- ====== Table One Start -->

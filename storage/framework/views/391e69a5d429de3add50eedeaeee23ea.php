@@ -27,8 +27,9 @@
 <?php endif; ?>
         <!-- Metric Group One -->
         
-        <!-- ====== Chart One Start -->
-        <?php if (isset($component)) { $__componentOriginaleb5fa027ae533bfeb7543073f99b25b8 = $component; } ?>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- ====== Chart One Start -->
+            <?php if (isset($component)) { $__componentOriginaleb5fa027ae533bfeb7543073f99b25b8 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginaleb5fa027ae533bfeb7543073f99b25b8 = $attributes; } ?>
 <?php $component = App\View\Components\Chart\MonthlySalesChart::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('chart.monthly-sales-chart'); ?>
@@ -48,7 +49,29 @@
 <?php $component = $__componentOriginaleb5fa027ae533bfeb7543073f99b25b8; ?>
 <?php unset($__componentOriginaleb5fa027ae533bfeb7543073f99b25b8); ?>
 <?php endif; ?>
-        <!-- ====== Chart One End -->
+            <?php if (isset($component)) { $__componentOriginal6cf8a7c8e2240e91d36b460990099071 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal6cf8a7c8e2240e91d36b460990099071 = $attributes; } ?>
+<?php $component = App\View\Components\Chart\TopSellingChart::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart.top-selling-chart'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\Chart\TopSellingChart::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal6cf8a7c8e2240e91d36b460990099071)): ?>
+<?php $attributes = $__attributesOriginal6cf8a7c8e2240e91d36b460990099071; ?>
+<?php unset($__attributesOriginal6cf8a7c8e2240e91d36b460990099071); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal6cf8a7c8e2240e91d36b460990099071)): ?>
+<?php $component = $__componentOriginal6cf8a7c8e2240e91d36b460990099071; ?>
+<?php unset($__componentOriginal6cf8a7c8e2240e91d36b460990099071); ?>
+<?php endif; ?>
+            <!-- ====== Chart One End -->
+        </div>
+
         </div>
         <div class="col-span-12">
         <!-- ====== Table One Start -->
