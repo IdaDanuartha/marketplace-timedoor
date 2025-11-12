@@ -74,8 +74,11 @@
               <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Vendor</h4>
               <?php if($product->vendor): ?>
                 <p class="text-gray-800 dark:text-gray-200"><?php echo e($product->vendor->name); ?></p>
-                <a href="<?php echo e(route('vendors.show', $product->vendor)); ?>" 
-                   class="text-blue-600 hover:underline text-sm">View Vendor →</a>
+                <?php if(auth()->user()?->admin): ?>
+                  <a href="<?php echo e(route('vendors.show', $product->vendor)); ?>" 
+                     class="text-blue-600 hover:underline text-sm">View Vendor →</a>
+                    
+                <?php endif; ?>
               <?php else: ?>
                 <p class="text-gray-500 dark:text-gray-400 text-sm">No vendor assigned.</p>
               <?php endif; ?>

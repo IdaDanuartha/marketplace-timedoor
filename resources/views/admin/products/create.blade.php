@@ -3,6 +3,11 @@
 @section('title', 'Create Product')
 
 @section('content')
+@php
+  $user = auth()->user();
+  $isVendor = $user->vendor ? true : false;
+@endphp
+
 <div class="grid grid-cols-12 gap-4 md:gap-6">
   <div class="col-span-12">
     {{-- Flash & Errors --}}
@@ -28,6 +33,7 @@
 
           {{-- Basic Inputs --}}
           <div class="grid grid-cols-2 gap-4">
+            {{-- Name --}}
             <div>
               <label class="block text-sm font-medium mb-1">Name</label>
               <input type="text" name="name" value="{{ old('name') }}" placeholder="Enter product name"
@@ -37,6 +43,7 @@
               @enderror
             </div>
 
+            {{-- Price --}}
             <div>
               <label class="block text-sm font-medium mb-1">Price</label>
               <input type="number" name="price" value="{{ old('price') }}" placeholder="Enter product price"
@@ -46,6 +53,7 @@
               @enderror
             </div>
 
+            {{-- Stock --}}
             <div>
               <label class="block text-sm font-medium mb-1">Stock</label>
               <input type="number" name="stock" value="{{ old('stock') }}" placeholder="Enter product stock"
@@ -55,6 +63,7 @@
               @enderror
             </div>
 
+            {{-- Category --}}
             <div>
               <label class="block text-sm font-medium mb-1">Category</label>
               <select name="category_id" class="select2 w-full" required>
@@ -66,26 +75,32 @@
               @enderror
             </div>
 
+            {{-- Vendor (Admin only) --}}
+            @unless($isVendor)
+              <div>
+                <label class="block text-sm font-medium mb-1">Vendor</label>
+                <select name="vendor_id" class="select2 w-full" required>
+                  <option value="">Select Vendor</option>
+                  @foreach ($vendors as $vendor)
+                    <option value="{{ $vendor->id }}">{{ $vendor->name }}</option>
+                  @endforeach
+                </select>
+                @error('vendor_id')
+                  <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+              </div>
+            @else
+              {{-- Hidden input for vendor --}}
+              <input type="hidden" name="vendor_id" value="{{ $user->vendor->id }}">
+            @endunless
 
-            <div>
-              <label class="block text-sm font-medium mb-1">Vendor</label>
-              <select name="vendor_id" class="select2 w-full" required>
-                <option value="">Select Vendor</option>
-                @foreach ($vendors as $vendor)
-                  <option value="{{ $vendor->id }}">{{ $vendor->name }}</option>
-                @endforeach
-              </select>
-              @error('vendor_id')
-                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
-              @enderror
-            </div>
-
+            {{-- Status --}}
             <div>
               <label class="block text-sm font-medium mb-1">Status</label>
               <select name="status" class="select2 w-full" required>
                 @foreach (\App\Enum\ProductStatus::cases() as $case)
                   <option value="{{ $case->name }}"
-                    {{ old('status', $product->status->name ?? \App\Enum\ProductStatus::ACTIVE->name) === $case->name ? 'selected' : '' }}>
+                    {{ old('status', \App\Enum\ProductStatus::ACTIVE->name) === $case->name ? 'selected' : '' }}>
                     {{ $case->label() }}
                   </option>
                 @endforeach
@@ -105,19 +120,15 @@
             @enderror
           </div>
 
-          {{-- Image Upload Section --}}
-          <div
-            class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/3"
-          >
+          {{-- Image Upload --}}
+          <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/3">
             <div class="px-5 py-4 sm:px-6 sm:py-5">
               <h3 class="text-base font-medium text-gray-800 dark:text-white/90">Product Image</h3>
             </div>
 
             <div class="space-y-6 border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
-              <div
-                class="dropzone rounded-xl border border-dashed border-gray-300 bg-gray-50 p-7 lg:p-10 dark:border-gray-700 dark:bg-gray-900"
-                id="product-dropzone"
-              >
+              <div id="product-dropzone"
+                   class="dropzone rounded-xl border border-dashed border-gray-300 bg-gray-50 p-7 lg:p-10 dark:border-gray-700 dark:bg-gray-900">
                 <input type="file" name="image_path" id="fileInput" class="hidden" accept="image/*">
                 <div id="preview" class="flex justify-center mb-4 hidden">
                   <img id="previewImage" class="max-h-48 rounded-lg border" />
@@ -132,7 +143,12 @@
           </div>
 
           {{-- Submit --}}
-          <div class="pt-4">
+          <div class="pt-4 flex justify-between items-center">
+            <div class="text-sm text-gray-500 dark:text-gray-400">
+              @if($isVendor)
+                <span>Your product will be automatically linked to your vendor account.</span>
+              @endif
+            </div>
             <button type="submit"
               class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition">
               Save Product
@@ -147,11 +163,10 @@
 
 @push('js')
 <script>
-  // Image Preview
+  // === Image Preview ===
   const fileInput = document.getElementById('fileInput');
   const preview = document.getElementById('preview');
   const previewImage = document.getElementById('previewImage');
-
   fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -164,7 +179,7 @@
     }
   });
 
-  // Initialize Select2
+  // === Select2 Init ===
   document.addEventListener('DOMContentLoaded', () => {
     $('.select2').select2({
       width: '100%',
@@ -173,7 +188,7 @@
     });
   });
 
-  // Initialize TinyMCE
+  // === TinyMCE Init ===
   tinymce.init({
     selector: '#editor',
     height: 300,

@@ -18,16 +18,22 @@ class OrderPolicy
 
     public function viewAny(User $user): Response
     {
-        return $user->admin()->exists() || $user->vendor()->exists()
+        return ($user->admin || $user->vendor)
             ? Response::allow()
             : Response::denyAsNotFound();
     }
 
     public function view(User $user, Order $order): Response
     {
-        return $user->admin()->exists() || $user->vendor()->exists()
-            ? Response::allow()
-            : Response::denyAsNotFound();
+        if ($user->admin) return Response::allow();
+
+        if ($user->vendor && $order->items()->whereHas('product', fn($q) => 
+            $q->where('vendor_id', $user->vendor->id)
+        )->exists()) {
+            return Response::allow();
+        }
+
+        return Response::denyAsNotFound();
     }
 
     public function create(User $user): Response
@@ -39,9 +45,15 @@ class OrderPolicy
 
     public function update(User $user, Order $order): Response
     {
-        return $user->admin()->exists()
-            ? Response::allow()
-            : Response::denyAsNotFound();
+        if ($user->admin) return Response::allow();
+
+        if ($user->vendor && $order->items()->whereHas('product', fn($q) => 
+            $q->where('vendor_id', $user->vendor->id)
+        )->exists()) {
+            return Response::allow();
+        }
+
+        return Response::denyAsNotFound();
     }
 
     public function delete(User $user, Order $order): Response

@@ -9,6 +9,7 @@ use App\Interfaces\ProductRepositoryInterface;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Vendor;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -25,6 +26,13 @@ class ProductController extends Controller
     {
         try {
             $filters = request()->only(['search', 'sort_by', 'sort_dir', 'status']);
+            
+            $user = Auth::user();
+            if ($user->vendor) {
+                // Vendor only see their own products
+                $filters['vendor_id'] = $user->vendor->id;
+            }
+
             $products = $this->products->paginateWithFilters($filters, 10);
             return view('admin.products.index', compact('products', 'filters'));
         } catch (Throwable $e) {
@@ -36,7 +44,10 @@ class ProductController extends Controller
     public function create()
     {
         try {
-            $vendors = Vendor::latest()->get();
+            $user = Auth::user();
+
+            // Vendor only create products for themselves
+            $vendors = $user->admin ? Vendor::latest()->get() : collect([$user->vendor]);
             $categories = Category::with('children')->whereNull('parent_id')->get();
 
             return view('admin.products.create', compact('vendors', 'categories'));
@@ -49,9 +60,15 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         try {
-            $this->products->create($request->validated());
-            return redirect()
-                ->route('products.index')
+            $data = $request->validated();
+            $user = Auth::user();
+
+            if ($user->vendor) {
+                $data['vendor_id'] = $user->vendor->id;
+            }
+
+            $this->products->create($data);
+            return redirect()->route('products.index')
                 ->with('success', 'Product created successfully.');
         } catch (Throwable $e) {
             Log::error('Failed to create product: ' . $e->getMessage());
@@ -62,6 +79,13 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         try {
+            $user = Auth::user();
+
+            // Vendor only edit their own products
+            if ($user->vendor && $product->vendor_id !== $user->vendor->id) {
+                abort(404);
+            }
+            
             $product->load(['category', 'vendor']);
             return view('admin.products.show', compact('product'));
         } catch (Throwable $e) {
@@ -70,11 +94,17 @@ class ProductController extends Controller
         }
     }
 
-
     public function edit(Product $product)
     {
         try {
-            $vendors = Vendor::latest()->get();
+            $user = Auth::user();
+
+            // Vendor only edit their own products
+            if ($user->vendor && $product->vendor_id !== $user->vendor->id) {
+                abort(404);
+            }
+
+            $vendors = $user->admin ? Vendor::latest()->get() : collect([$user->vendor]);
             $categories = Category::with('children')->whereNull('parent_id')->get();
 
             return view('admin.products.edit', compact('product', 'vendors', 'categories'));
@@ -87,9 +117,15 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product)
     {
         try {
-            $this->products->update($product, $request->validated());
-            return redirect()
-                ->route('products.index')
+            $user = Auth::user();
+            $data = $request->validated();
+
+            if ($user->vendor) {
+                $data['vendor_id'] = $user->vendor->id;
+            }
+
+            $this->products->update($product, $data);
+            return redirect()->route('products.index')
                 ->with('success', 'Product updated successfully.');
         } catch (Throwable $e) {
             Log::error('Failed to update product: ' . $e->getMessage());
@@ -100,9 +136,14 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         try {
+            $user = Auth::user();
+
+            if ($user->vendor && $product->vendor_id !== $user->vendor->id) {
+                abort(404);
+            }
+
             $this->products->delete($product);
-            return redirect()
-                ->route('products.index')
+            return redirect()->route('products.index')
                 ->with('success', 'Product deleted successfully.');
         } catch (Throwable $e) {
             Log::error('Failed to delete product: ' . $e->getMessage());

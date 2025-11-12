@@ -27,22 +27,19 @@
   <div class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
     <nav>
 
-      
-      <?php if(auth()->user()?->admin || auth()->user()?->vendor): ?>
-        <div>
-          <h3 class="mb-4 text-xs uppercase leading-5 text-gray-400"
-            :class="sidebarToggle ? 'lg:hidden' : ''">Statistics</h3>
-          <ul class="flex flex-col gap-4 mb-6">
-            <li>
-              <a href="<?php echo e(route('dashboard.index')); ?>"
-                class="menu-item group <?php echo e(request()->is('dashboard') ? 'menu-item-active' : 'menu-item-inactive'); ?>">
-                <svg xmlns="http://www.w3.org/2000/svg" class="menu-item-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-line-icon lucide-chart-line"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Dashboard</span>
-              </a>
-            </li>
-          </ul>
-        </div>
-      <?php endif; ?>
+      <div>
+        <h3 class="mb-4 text-xs uppercase leading-5 text-gray-400"
+          :class="sidebarToggle ? 'lg:hidden' : ''">Statistics</h3>
+        <ul class="flex flex-col gap-4 mb-6">
+          <li>
+            <a href="<?php echo e(route('dashboard.index')); ?>"
+              class="menu-item group <?php echo e(request()->is('dashboard') ? 'menu-item-active' : 'menu-item-inactive'); ?>">
+              <svg xmlns="http://www.w3.org/2000/svg" class="menu-item-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-line-icon lucide-chart-line"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+              <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Dashboard</span>
+            </a>
+          </li>
+        </ul>
+      </div>
 
       
       <?php if(auth()->user()?->admin): ?>
@@ -147,7 +144,6 @@
       <?php endif; ?>
 
       
-      <?php if(auth()->user()?->admin || auth()->user()?->vendor): ?>
         <div>
           <h3 class="mb-4 text-xs uppercase leading-5 text-gray-400"
             :class="sidebarToggle ? 'lg:hidden' : ''">Settings</h3>
@@ -171,7 +167,6 @@
             <?php endif; ?>
           </ul>
         </div>
-      <?php endif; ?>
 
     </nav>
   </div>

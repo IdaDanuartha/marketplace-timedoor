@@ -9,6 +9,8 @@ use App\Interfaces\OrderRepositoryInterface;
 use App\Models\Order;
 use App\Models\Customer;
 use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -23,9 +25,15 @@ class OrderController extends Controller
     {
         try {
             $filters = request()->only(['search', 'status']);
-            $orders = $this->orders->paginateWithFilters($filters, 10);
-            $statuses = OrderStatus::cases();
+            $user = Auth::user();
 
+            if ($user->vendor) {
+                $filters['vendor_id'] = $user->vendor->id;
+            }
+
+            $orders = $this->orders->paginateWithFilters($filters, 10);
+
+            $statuses = OrderStatus::cases();
             return view('admin.orders.index', compact('orders', 'filters', 'statuses'));
         } catch (Throwable $e) {
             Log::error('Failed to load orders: ' . $e->getMessage());
@@ -33,12 +41,30 @@ class OrderController extends Controller
         }
     }
 
+    public function show(Order $order)
+    {
+        $order->load(['customer', 'items.product']);
+        $statuses = OrderStatus::cases();
+
+        $user = Auth::user();
+        if ($user->vendor && !$order->items->contains(fn($i) => $i->product->vendor_id === $user->vendor->id)) {
+            abort(403);
+        }
+
+        return view('admin.orders.show', compact('order', 'statuses'));
+    }
+
     public function create()
     {
         try {
+            $user = Auth::user();
             $customers = Customer::latest()->get();
-            $products = Product::latest()->get();
             $statuses = OrderStatus::cases();
+
+            // Vendor hanya bisa membuat order dengan produknya sendiri
+            $products = $user->vendor
+                ? Product::where('vendor_id', $user->vendor->id)->get()
+                : Product::latest()->get();
 
             return view('admin.orders.create', compact('customers', 'products', 'statuses'));
         } catch (Throwable $e) {
@@ -58,20 +84,23 @@ class OrderController extends Controller
         }
     }
 
-    public function show(Order $order)
-    {
-        $order->load('items.product');
-        $statuses = OrderStatus::cases();
-
-        return view('admin.orders.show', compact('order', 'statuses'));
-    }
-
     public function edit(Order $order)
     {
         try {
+            $user = Auth::user();
+
+            if ($user->vendor && !$order->items()->whereHas('product', fn($q) =>
+                $q->where('vendor_id', $user->vendor->id)
+            )->exists()) {
+                abort(403);
+            }
+
             $customers = Customer::latest()->get();
-            $products = Product::latest()->get();
             $statuses = OrderStatus::cases();
+            $products = $user->vendor
+                ? Product::where('vendor_id', $user->vendor->id)->get()
+                : Product::latest()->get();
+
             $order->load('items.product');
 
             return view('admin.orders.edit', compact('order', 'customers', 'products', 'statuses'));
@@ -92,9 +121,32 @@ class OrderController extends Controller
         }
     }
 
+    public function updateStatus(Request $request, Order $order)
+    {
+        try {
+            $request->validate([
+                'status' => 'required|in:' . implode(',', array_map(fn($s) => $s->value, OrderStatus::cases())),
+            ]);
+
+            $this->orders->update($order, ['status' => $request->input('status')]);
+            return back()->with('success', 'Order status updated successfully.');
+        } catch (Throwable $e) {
+            Log::error('Failed to update order: ' . $e->getMessage());
+            return back()->withInput()->withErrors('Failed to update order.');
+        }
+    }
+
     public function destroy(Order $order)
     {
         try {
+            $user = Auth::user();
+
+            if ($user->vendor && !$order->items()->whereHas('product', fn($q) =>
+                $q->where('vendor_id', $user->vendor->id)
+            )->exists()) {
+                abort(403);
+            }
+
             $this->orders->delete($order);
             return redirect()->route('orders.index')->with('success', 'Order deleted successfully.');
         } catch (Throwable $e) {

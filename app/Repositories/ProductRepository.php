@@ -45,6 +45,10 @@ class ProductRepository implements ProductRepositoryInterface
             $query->where('status', $filters['status']);
         }
 
+        if (!empty($filters['vendor_id'])) {
+            $query->where('vendor_id', $filters['vendor_id']);
+        }
+
         // Sorting
         $sortBy = $filters['sort_by'] ?? 'created_at';
         $sortDir = $filters['sort_dir'] ?? 'desc';

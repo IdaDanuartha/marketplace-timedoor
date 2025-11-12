@@ -61,10 +61,12 @@
       </button>
     </form>
 
-    <a href="<?php echo e(route('orders.create')); ?>" 
-       class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-      + Add Order
-    </a>
+    <?php if(auth()->user()?->admin): ?>
+      <a href="<?php echo e(route('orders.create')); ?>" 
+        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+        + Add Order
+      </a>
+    <?php endif; ?>
   </div>
 
   <!-- Table -->
@@ -159,7 +161,9 @@
               </a>
             </th>
 
-            <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300 text-right">Actions</th>
+            <?php if(auth()->user()?->admin): ?>
+              <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300 text-right">Actions</th>
+            <?php endif; ?>
           </tr>
         </thead>
 
@@ -173,7 +177,7 @@
               <td class="px-5 py-3 text-gray-700 dark:text-gray-300"><?php echo e($order->customer->name ?? '-'); ?></td>
               <td class="px-5 py-3 text-gray-700 dark:text-gray-300">Rp<?php echo e(number_format($order->total_price, 0, ',', '.')); ?></td>
               <td class="px-5 py-3 text-gray-700 dark:text-gray-300">Rp<?php echo e(number_format($order->shipping_cost, 0, ',', '.')); ?></td>
-              <td class="px-5 py-3 text-center">
+              <td class="px-5 py-3">
                 <?php
                   $color = match($order->status) {
                     \App\Enum\OrderStatus::PENDING => 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
@@ -188,22 +192,24 @@
 
                 </span>
               </td>
-              <td class="px-5 py-3 text-right">
-                <a href="<?php echo e(route('orders.edit', $order)); ?>" onclick="event.stopPropagation()"
-                  class="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400 font-medium transition">
-                  Edit
-                </a>
-                <button 
-                  @click.prevent="
-                    event.stopPropagation();
-                    title = '<?php echo e($order->code); ?>'; 
-                    deleteUrl = '<?php echo e(route('orders.destroy', $order)); ?>'; 
-                    isModalOpen = true
-                  "
-                  class="text-red-600 hover:text-red-700 dark:hover:text-red-400 ml-3 font-medium transition">
-                  Delete
-                </button>
-              </td>
+              <?php if(auth()->user()?->admin): ?>
+                <td class="px-5 py-3 text-right">
+                  <a href="<?php echo e(route('orders.edit', $order)); ?>" onclick="event.stopPropagation()"
+                    class="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400 font-medium transition">
+                    Edit
+                  </a>
+                  <button 
+                    @click.prevent="
+                      event.stopPropagation();
+                      title = '<?php echo e($order->code); ?>'; 
+                      deleteUrl = '<?php echo e(route('orders.destroy', $order)); ?>'; 
+                      isModalOpen = true
+                    "
+                    class="text-red-600 hover:text-red-700 dark:hover:text-red-400 ml-3 font-medium transition">
+                    Delete
+                  </button>
+                </td>
+              <?php endif; ?>
             </tr>
           <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
             <tr>

@@ -83,7 +83,9 @@
                   <?php endif; ?>
                 </a>
               </th>
-              <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300">Vendor</th>
+              <?php if(auth()->user()?->admin): ?>
+                <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300">Vendor</th>
+              <?php endif; ?>
               <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300">
                 <a href="<?php echo e(route('products.index', [
                   'sort_by' => 'price',
@@ -156,11 +158,12 @@
                   <?php echo e($product->name); ?>
 
                 </td>
-                
-                <td class="px-5 py-3 text-gray-700 dark:text-gray-300">
-                  <?php echo e($product->vendor->name ?? '-'); ?>
+                <?php if(auth()->user()?->admin): ?>
+                  <td class="px-5 py-3 text-gray-700 dark:text-gray-300">
+                    <?php echo e($product->vendor->name ?? '—'); ?>
 
-                </td>
+                  </td>
+                <?php endif; ?>
                 <td class="px-5 py-3 text-gray-700 dark:text-gray-300">
                   Rp<?php echo e(number_format($product->price, 0, ',', '.')); ?>
 

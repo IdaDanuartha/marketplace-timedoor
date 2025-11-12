@@ -85,7 +85,9 @@
                   @endif
                 </a>
               </th>
-              <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300">Vendor</th>
+              @if (auth()->user()?->admin)
+                <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300">Vendor</th>
+              @endif
               <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300">
                 <a href="{{ route('products.index', [
                   'sort_by' => 'price',
@@ -157,12 +159,11 @@
                 <td class="px-5 py-3 text-gray-800 dark:text-gray-200 font-semibold">
                   {{ $product->name }}
                 </td>
-                {{-- <td class="px-5 py-3 text-gray-700 dark:text-gray-300">
-                  {{ $product->category->name ?? '-' }}
-                </td> --}}
-                <td class="px-5 py-3 text-gray-700 dark:text-gray-300">
-                  {{ $product->vendor->name ?? '-' }}
-                </td>
+                @if (auth()->user()?->admin)
+                  <td class="px-5 py-3 text-gray-700 dark:text-gray-300">
+                    {{ $product->vendor->name ?? '—' }}
+                  </td>
+                @endif
                 <td class="px-5 py-3 text-gray-700 dark:text-gray-300">
                   Rp{{ number_format($product->price, 0, ',', '.') }}
                 </td>

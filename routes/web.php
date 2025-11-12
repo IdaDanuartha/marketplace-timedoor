@@ -73,6 +73,7 @@ Route::middleware(['auth'])
         Route::resource('categories', CategoryController::class);
         Route::resource('products', ProductController::class);
         Route::resource('orders', OrderController::class);
+        Route::put('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
         Route::resource('vendors', VendorController::class);
         Route::resource('customers', CustomerController::class);
         Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');

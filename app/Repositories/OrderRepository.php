@@ -34,6 +34,12 @@ class OrderRepository implements OrderRepositoryInterface
             $query->where('status', $filters['status']);
         }
 
+        if (!empty($filters['vendor_id'])) {
+            $query->whereHas('items.product', fn($q) => 
+                $q->where('vendor_id', $filters['vendor_id'])
+            );
+        }
+
         return $query->paginate($perPage)->appends($filters);
     }
 
