@@ -68,12 +68,8 @@
       <!-- Hamburger Toggle BTN -->
 
       <a href="index.html" class="lg:hidden">
-        <img class="dark:hidden" src="./images/logo/new-logo.png" alt="Logo" />
-        <img
-          class="hidden dark:block"
-          src="./images/logo/logo-dark.svg"
-          alt="Logo"
-        />
+        <img class="w-18 rounded-full" src="{{ setting('site_logo', asset('images/placeholder-image.svg')) }}" 
+          alt="{{ setting('site_name', 'Marketplace Timedoor') }}"  />
       </a>
 
       <!-- Application nav menu button -->
@@ -144,7 +140,7 @@
         <!-- Dark Mode Toggler -->
 
         <!-- Notification Menu Area -->
-        <div
+        {{-- <div
           class="relative"
           x-data="{ dropdownOpen: false, notifying: true }"
           @click.outside="dropdownOpen = false"
@@ -560,7 +556,7 @@
             </a>
           </div>
           <!-- Dropdown End -->
-        </div>
+        </div> --}}
         <!-- Notification Menu Area -->
       </div>
 

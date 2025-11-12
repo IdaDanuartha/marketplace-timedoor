@@ -16,7 +16,7 @@
         />
       </span>
       <img
-        class="logo-icon"
+        class="w-18 rounded-full object-cover border"
         :class="sidebarToggle ? 'lg:block' : 'hidden'"
         src="{{ setting('logo_icon', asset('images/placeholder-image.svg')) }}"
         alt="Logo"

@@ -8,12 +8,13 @@ use Illuminate\View\Component;
 
 class MetricGroupDashboard extends Component
 {
+    public $metrics;
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct($metrics)
     {
-        //
+        $this->metrics = $metrics;
     }
 
     /**

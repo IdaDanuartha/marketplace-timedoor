@@ -6,13 +6,12 @@
 <div class="max-w-3xl mx-auto space-y-8">
   <h1 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Edit Profile</h1>
 
-  {{-- Success / Error Message --}}
+  {{-- Flash Messages --}}
   @if(session('success'))
     <div class="p-3 rounded-lg bg-green-100 text-green-700 border border-green-200">
       {{ session('success') }}
     </div>
   @endif
-
   @if($errors->any())
     <div class="p-3 rounded-lg bg-red-100 text-red-700 border border-red-200">
       <ul class="list-disc list-inside">
@@ -23,6 +22,7 @@
     </div>
   @endif
 
+  {{-- Update Profile --}}
   <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
     @csrf
     @method('PUT')
@@ -57,38 +57,33 @@
       </div>
     </div>
 
-    {{-- PROFILE IMAGE (Dropzone Component) --}}
+    {{-- PROFILE IMAGE --}}
     <div>
       <label class="block text-sm font-medium mb-2">Profile Image</label>
       <div id="dropzone" 
            class="dropzone rounded-xl border border-dashed border-gray-300 bg-gray-50 p-7 lg:p-10
                   dark:border-gray-700 dark:bg-gray-900 cursor-pointer text-center">
         <input type="file" name="profile_image" id="fileInput" class="hidden" accept="image/*">
-        
-        {{-- Preview --}}
         <div id="preview" class="{{ $user->profile_image ? '' : 'hidden' }} mb-4 flex justify-center">
           <img id="previewImage"
                src="{{ $user->profile_image ? profile_image($user->profile_image) : '' }}"
                class="max-h-48 rounded-lg border dark:border-gray-700">
         </div>
-
         <div id="dz-message" onclick="document.getElementById('fileInput').click()">
           <h4 class="text-lg font-semibold text-gray-800 dark:text-white/90">Drop or Browse</h4>
           <p class="text-sm text-gray-500">Upload PNG, JPG, WEBP, or SVG image</p>
         </div>
       </div>
-
       @if($user->profile_image)
         <a href="{{ profile_image($user->profile_image) }}" target="_blank"
           class="text-xs text-blue-500 hover:underline block mt-2">View Current Image</a>
       @endif
-
       @error('profile_image')
         <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
       @enderror
     </div>
 
-    {{-- ROLE-SPECIFIC FIELDS --}}
+    {{-- ROLE FIELDS --}}
     @if($user->admin)
       <div>
         <label class="block text-sm font-medium mb-1">Name</label>
@@ -123,7 +118,6 @@
       </div>
     @endif
 
-    {{-- SUBMIT --}}
     <div class="text-right">
       <button type="submit"
         class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium">
@@ -131,6 +125,74 @@
       </button>
     </div>
   </form>
+
+  {{-- =========================
+        DELETE ACCOUNT MODAL
+  ========================== --}}
+  <div x-data="{ open: false }" class="pt-10 border-t border-gray-200 dark:border-gray-800">
+    <h2 class="text-lg font-semibold text-red-600 dark:text-red-400 mb-3">Danger Zone</h2>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+      Once you delete your account, all of your data will be permanently removed. 
+      This action cannot be undone. You will receive an email to confirm this action.
+    </p>
+
+    <button 
+      @click="open = true"
+      class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition">
+      Request Account Deletion
+    </button>
+
+    <!-- Modal -->
+    <div 
+      x-show="open"
+      x-transition.opacity
+      x-cloak
+      class="fixed inset-0 flex items-center justify-center p-5 z-99999"
+    >
+      <div @click="open = false" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm"></div>
+      <div 
+        @click.outside="open = false"
+        x-transition.scale.origin.bottom
+        class="relative w-full max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-lg p-6"
+      >
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Confirm Account Deletion</h2>
+          <button @click="open = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">✕</button>
+        </div>
+
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">
+          Enter your password to confirm. A confirmation link will be sent to your email.
+        </p>
+
+        <form action="{{ route('account.deletion.request') }}" method="POST" class="space-y-4">
+          @csrf
+          <div>
+            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Password</label>
+            <input type="password" name="password" required
+              class="w-full border rounded-lg px-3 py-2 dark:bg-gray-800 dark:border-gray-700 dark:text-white text-sm"
+              placeholder="Enter your password">
+            @error('password')
+              <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+            @enderror
+          </div>
+
+          <div class="flex justify-end gap-3 pt-3">
+            <button 
+              type="button"
+              @click="open = false"
+              class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition">
+              Cancel
+            </button>
+            <button 
+              type="submit"
+              class="px-4 py-2 bg-red-600 hover:bg-red-700 text-sm rounded-lg text-white transition">
+              Confirm Deletion
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 @endsection
 

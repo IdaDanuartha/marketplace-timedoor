@@ -7,7 +7,7 @@
         <!-- Metric Group One -->
         <?php if (isset($component)) { $__componentOriginal05a10049c130e9e1a2a316edd9f050e6 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal05a10049c130e9e1a2a316edd9f050e6 = $attributes; } ?>
-<?php $component = App\View\Components\MetricGroupDashboard::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = App\View\Components\MetricGroupDashboard::resolve(['metrics' => $metrics] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('metric-group-dashboard'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
@@ -54,7 +54,7 @@
         <!-- ====== Table One Start -->
         <?php if (isset($component)) { $__componentOriginal67fbdb781267f99df5676f65f4ed7825 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal67fbdb781267f99df5676f65f4ed7825 = $attributes; } ?>
-<?php $component = App\View\Components\Table\RecentOrdersTable::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = App\View\Components\Table\RecentOrdersTable::resolve(['recentOrders' => $recentOrders] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('table.recent-orders-table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
@@ -76,4 +76,12 @@
         </div>
     </div>
 <?php $__env->stopSection(); ?>
+
+<?php $__env->startPush('js'); ?>
+<script>
+  window.chartData = <?php echo json_encode($chartData, 15, 512) ?>;
+  window.topProducts = <?php echo json_encode($topProducts, 15, 512) ?>;
+</script>
+<script type="module" src="<?php echo e(mix('js/charts/dashboard.js')); ?>"></script>
+<?php $__env->stopPush(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /Users/gusde/Documents/laravel/marketplace-timedoor/resources/views/admin/dashboard/index.blade.php ENDPATH**/ ?>

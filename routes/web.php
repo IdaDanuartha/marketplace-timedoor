@@ -1,13 +1,15 @@
 <?php
 
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\AccountDeletionController;
+use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SocialiteController;
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\WebSettingController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -21,9 +23,26 @@ Route::middleware(['guest'])->prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login'])->middleware('throttle:login')->name('login.post');
     Route::get('register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('register', [AuthController::class, 'register'])->name('register.post');
+
+    Route::get('/forgot-password', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
+
 });
 
-Route::middleware(['auth'])->post('auth/logout', [AuthController::class, 'logout'])->name('logout');
+Route::middleware(['auth'])->group(function () {
+    Route::post('auth/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Delete account (request email)
+    Route::post('/profile/deletion/request', [AccountDeletionController::class, 'requestDeletion'])
+        ->name('account.deletion.request');
+
+    // Link dari email (tidak perlu auth; pakai signed + token DB)
+    Route::get('/profile/deletion/confirm', [AccountDeletionController::class, 'confirm'])
+        ->name('account.deletion.confirm')->middleware('signed');
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('email/verify', [AuthController::class, 'verifyEmail'])->name('verification.notice');
 });
@@ -45,10 +64,12 @@ Route::prefix('auth')->group(function () {
 });
 
 
+Route::get('/dashboard/orders-stats', [DashboardController::class, 'getOrdersStats'])->name('dashboard.orders.stats');
+
 Route::middleware(['auth'])
     ->prefix('dashboard')
     ->group(function () {
-        Route::get('/', DashboardController::class)->name('dashboard.index');
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
         Route::resource('categories', CategoryController::class);
         Route::resource('products', ProductController::class);
         Route::resource('orders', OrderController::class);

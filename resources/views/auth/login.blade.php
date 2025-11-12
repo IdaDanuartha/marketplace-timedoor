@@ -118,7 +118,7 @@
                                 <input type="checkbox" name="remember" class="mr-2 rounded border-gray-300 dark:border-gray-700 focus:ring-brand-500" />
                                 Keep me logged in
                             </label>
-                            <a href="#" class="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400">Forgot password?</a>
+                            <a href="{{ route('password.request') }}" class="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400">Forgot password?</a>
                         </div>
 
                         <!-- Button -->

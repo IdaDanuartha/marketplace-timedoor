@@ -118,7 +118,7 @@
                                 <input type="checkbox" name="remember" class="mr-2 rounded border-gray-300 dark:border-gray-700 focus:ring-brand-500" />
                                 Keep me logged in
                             </label>
-                            <a href="#" class="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400">Forgot password?</a>
+                            <a href="<?php echo e(route('password.request')); ?>" class="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400">Forgot password?</a>
                         </div>
 
                         <!-- Button -->
@@ -147,7 +147,7 @@
             <div class="flex items-center justify-center z-1">
                 <div class="flex flex-col items-center max-w-xs">
                     <a href="/" class="block mb-4">
-                        <img src="/images/logo/auth-new-logo.png" alt="Logo" />
+                        <img src="/images/logo/auth-logo.svg" alt="Logo" />
                     </a>
                     <p class="text-center text-gray-400 dark:text-white/60">
                         Welcome back! Manage your account and continue where you left off.

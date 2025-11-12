@@ -8,12 +8,14 @@ use Illuminate\View\Component;
 
 class RecentOrdersTable extends Component
 {
+    public $recentOrders;
+
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct($recentOrders)
     {
-        //
+        $this->recentOrders = $recentOrders;
     }
 
     /**

@@ -198,8 +198,9 @@ unset($__errorArgs, $__bag); ?>
     </div>
   </div>
 </div>
+<?php $__env->stopSection(); ?>
 
-
+<?php $__env->startPush('js'); ?>
 <script>
   function orderForm(order = {}, orderItems = []) {
     return {
@@ -275,5 +276,5 @@ unset($__errorArgs, $__bag); ?>
     };
   }
 </script>
-<?php $__env->stopSection(); ?>
+<?php $__env->stopPush(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /Users/gusde/Documents/laravel/marketplace-timedoor/resources/views/admin/orders/edit.blade.php ENDPATH**/ ?>
