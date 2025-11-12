@@ -4,7 +4,18 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto space-y-8">
-  <h1 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Edit Profile</h1>
+  <div class="flex gap-3 mb-4 items-center">
+    <h1 class="text-xl font-semibold text-gray-800 dark:text-white">Edit Profile</h1>
+    @if (auth()->user()->vendor)
+      <div class="relative">
+        @if(auth()->user()->vendor?->is_approved)
+          <span class="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700">Approved</span>
+        @else
+          <span class="px-2 py-0.5 text-xs rounded-full bg-yellow-100 text-yellow-700">Pending Approval</span>
+        @endif
+      </div>
+    @endif
+  </div>
 
   {{-- Flash Messages --}}
   @if(session('success'))

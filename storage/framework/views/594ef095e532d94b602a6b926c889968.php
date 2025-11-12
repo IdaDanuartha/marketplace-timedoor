@@ -28,184 +28,144 @@
 
   <?php if($errors->any()): ?>
     <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-700/40 dark:bg-red-900/30 dark:text-red-300">
-      <div class="flex items-start gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M12 5a7 7 0 100 14 7 7 0 000-14z" />
-        </svg>
-        <ul class="space-y-1">
-          <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <li><?php echo e($error); ?></li>
-          <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        </ul>
-      </div>
+      <ul class="space-y-1">
+        <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+          <li><?php echo e($error); ?></li>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+      </ul>
     </div>
   <?php endif; ?>
 
-  <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
-    <form method="GET" class="flex sm:flex-nowrap flex-wrap items-center gap-2">
-      <input type="text" name="search" value="<?php echo e($filters['search'] ?? ''); ?>" placeholder="Search order..."
-        class="border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 w-64 bg-white dark:bg-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+  <!-- Filters -->
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-6">
+    <form method="GET" class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+      <input type="text" 
+        name="search" 
+        value="<?php echo e($filters['search'] ?? ''); ?>" 
+        placeholder="Search order or customer..." 
+        class="border border-gray-300 rounded-lg px-3 py-2 w-full sm:w-64 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      >
 
-      <select name="status" class="select2 w-20">
+      <select name="status" class="select2 rounded-lg border border-gray-300 px-3 py-2 w-[150px]">
         <option value="">All Status</option>
         <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $status): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-          <option value="<?php echo e($status->name); ?>" <?php echo e(($filters['status'] ?? '') === $status->name ? 'selected' : ''); ?>>
+          <option value="<?php echo e($status->value); ?>" <?php if(($filters['status'] ?? '') === $status->value): echo 'selected'; endif; ?>>
             <?php echo e($status->label()); ?>
 
           </option>
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
       </select>
 
-      <button class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+      <select name="payment_status" class="select2 rounded-lg border border-gray-300 px-3 py-2 w-[150px]">
+        <option value="">All Payment</option>
+        <?php $__currentLoopData = ['unpaid', 'paid', 'failed']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ps): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+          <option value="<?php echo e($ps); ?>" <?php if(($filters['payment_status'] ?? '') === $ps): echo 'selected'; endif; ?>>
+            <?php echo e(ucfirst($ps)); ?>
+
+          </option>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+      </select>
+
+      <select name="payment_method" class="select2 rounded-lg border border-gray-300 px-3 py-2 w-[160px]">
+        <option value="">All Methods</option>
+        <?php $__currentLoopData = ['bank_transfer', 'gopay', 'qris', 'credit_card']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $method): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+          <option value="<?php echo e($method); ?>" <?php if(($filters['payment_method'] ?? '') === $method): echo 'selected'; endif; ?>>
+            <?php echo e(ucwords(str_replace('_', ' ', $method))); ?>
+
+          </option>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+      </select>
+
+      <div class="flex gap-3">
+        <input type="date" 
+          name="date_from" 
+          value="<?php echo e($filters['date_from'] ?? ''); ?>" 
+          class="border border-gray-300 rounded-lg px-3 py-2 w-40"
+        >
+        <input type="date" 
+          name="date_to" 
+          value="<?php echo e($filters['date_to'] ?? ''); ?>" 
+          class="border border-gray-300 rounded-lg px-3 py-2 w-40"
+        >
+      </div>
+
+      <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition whitespace-nowrap">
         Filter
       </button>
     </form>
 
     <?php if(auth()->user()?->admin): ?>
       <a href="<?php echo e(route('orders.create')); ?>" 
-        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition whitespace-nowrap w-full sm:w-auto text-center">
         + Add Order
       </a>
     <?php endif; ?>
   </div>
 
+  <div class="flex justify-end mb-4">
+    <a href="<?php echo e(route('orders.export', request()->query())); ?>" 
+      class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition whitespace-nowrap">
+      Export Excel
+    </a>
+  </div>
   <!-- Table -->
-  <div class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900/50">
+  <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
     <div class="max-w-full overflow-x-auto">
       <table class="min-w-full text-left text-sm">
-        <thead class="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/30">
+        <thead class="border-b border-gray-100 bg-gray-50">
           <tr>
-            <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300">
-              <a href="<?php echo e(route('orders.index', [
-                'sort_by' => 'code',
-                'sort_dir' => ($filters['sort_by'] ?? '') === 'code' && ($filters['sort_dir'] ?? '') === 'asc' ? 'desc' : 'asc',
-                'search' => $filters['search'] ?? '',
-              ])); ?>" class="flex items-center gap-1 hover:underline">
-                Code
-                <?php if(($filters['sort_by'] ?? '') === 'code'): ?>
-                  <?php if(($filters['sort_dir'] ?? '') === 'asc'): ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
-                    </svg>
-                  <?php else: ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                  <?php endif; ?>
-                <?php endif; ?>
-              </a>
-            </th>
-
-            <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300">Customer</th>
-
-            <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300">
-              <a href="<?php echo e(route('orders.index', [
-                'sort_by' => 'total_price',
-                'sort_dir' => ($filters['sort_by'] ?? '') === 'total_price' && ($filters['sort_dir'] ?? '') === 'asc' ? 'desc' : 'asc',
-                'search' => $filters['search'] ?? '',
-              ])); ?>" class="flex items-center gap-1 hover:underline">
-                Total
-                <?php if(($filters['sort_by'] ?? '') === 'total_price'): ?>
-                  <?php if(($filters['sort_dir'] ?? '') === 'asc'): ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
-                    </svg>
-                  <?php else: ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                  <?php endif; ?>
-                <?php endif; ?>
-              </a>
-            </th>
-
-            <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300">
-              <a href="<?php echo e(route('orders.index', [
-                'sort_by' => 'shipping_cost',
-                'sort_dir' => ($filters['sort_by'] ?? '') === 'shipping_cost' && ($filters['sort_dir'] ?? '') === 'asc' ? 'desc' : 'asc',
-                'search' => $filters['search'] ?? '',
-              ])); ?>" class="flex items-center gap-1 hover:underline">
-                Shipping
-                <?php if(($filters['sort_by'] ?? '') === 'shipping_cost'): ?>
-                  <?php if(($filters['sort_dir'] ?? '') === 'asc'): ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
-                    </svg>
-                  <?php else: ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                  <?php endif; ?>
-                <?php endif; ?>
-              </a>
-            </th>
-
-            <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300">
-              <a href="<?php echo e(route('orders.index', [
-                'sort_by' => 'status',
-                'sort_dir' => ($filters['sort_by'] ?? '') === 'status' && ($filters['sort_dir'] ?? '') === 'asc' ? 'desc' : 'asc',
-                'search' => $filters['search'] ?? '',
-              ])); ?>" class="flex items-center gap-1 hover:underline">
-                Status
-                <?php if(($filters['sort_by'] ?? '') === 'status'): ?>
-                  <?php if(($filters['sort_dir'] ?? '') === 'asc'): ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
-                    </svg>
-                  <?php else: ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                  <?php endif; ?>
-                <?php endif; ?>
-              </a>
-            </th>
-
+            <th class="px-5 py-3 font-medium text-gray-600">Code</th>
+            <th class="px-5 py-3 font-medium text-gray-600">Customer</th>
+            <th class="px-5 py-3 font-medium text-gray-600">Total</th>
+            <th class="px-5 py-3 font-medium text-gray-600">Shipping</th>
+            <th class="px-5 py-3 font-medium text-gray-600">Grand Total</th>
+            <th class="px-5 py-3 font-medium text-gray-600">Payment</th>
+            <th class="px-5 py-3 font-medium text-gray-600">Status</th>
             <?php if(auth()->user()?->admin): ?>
-              <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300 text-right">Actions</th>
+              <th class="px-5 py-3 font-medium text-gray-600 text-right">Actions</th>
             <?php endif; ?>
           </tr>
         </thead>
-
-        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+        <tbody class="divide-y divide-gray-100">
           <?php $__empty_1 = true; $__currentLoopData = $orders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $order): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-            <tr
-              onclick="window.location='<?php echo e(route('orders.show', $order)); ?>'"
-              class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors"
-            >
-              <td class="px-5 py-3 font-semibold text-gray-800 dark:text-gray-100"><?php echo e($order->code); ?></td>
-              <td class="px-5 py-3 text-gray-700 dark:text-gray-300"><?php echo e($order->customer->name ?? '-'); ?></td>
-              <td class="px-5 py-3 text-gray-700 dark:text-gray-300">Rp<?php echo e(number_format($order->total_price, 0, ',', '.')); ?></td>
-              <td class="px-5 py-3 text-gray-700 dark:text-gray-300">Rp<?php echo e(number_format($order->shipping_cost, 0, ',', '.')); ?></td>
+            <tr onclick="window.location='<?php echo e(route('orders.show', $order)); ?>'"
+              class="cursor-pointer hover:bg-gray-50 transition-colors">
+              <td class="px-5 py-3 font-semibold text-gray-800"><?php echo e($order->code); ?></td>
+              <td class="px-5 py-3 text-gray-700"><?php echo e($order->customer->name ?? '-'); ?></td>
+              <td class="px-5 py-3 text-gray-700">Rp<?php echo e(number_format($order->total_price, 0, ',', '.')); ?></td>
+              <td class="px-5 py-3 text-gray-700">Rp<?php echo e(number_format($order->shipping_cost, 0, ',', '.')); ?></td>
+              <td class="px-5 py-3 font-semibold text-gray-900">Rp<?php echo e(number_format($order->grand_total, 0, ',', '.')); ?></td>
+              <td class="px-5 py-3 text-gray-700 space-y-1">
+                <span class="block text-xs font-semibold"><?php echo e(strtoupper($order->payment_status)); ?></span>
+                <span class="block text-xs text-gray-500"><?php echo e(strtoupper($order->payment_method ?? '-')); ?></span>
+              </td>
               <td class="px-5 py-3">
                 <?php
                   $color = match($order->status) {
-                    \App\Enum\OrderStatus::PENDING => 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
-                    \App\Enum\OrderStatus::PROCESSING => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-                    \App\Enum\OrderStatus::SHIPPED => 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
-                    \App\Enum\OrderStatus::DELIVERED => 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
-                    \App\Enum\OrderStatus::CANCELED => 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
+                    \App\Enum\OrderStatus::PENDING => 'bg-yellow-100 text-yellow-700',
+                    \App\Enum\OrderStatus::PROCESSING => 'bg-blue-100 text-blue-700',
+                    \App\Enum\OrderStatus::CANCELED => 'bg-red-100 text-red-700',
+                    \App\Enum\OrderStatus::SHIPPED => 'bg-indigo-100 text-indigo-700',
+                    \App\Enum\OrderStatus::DELIVERED => 'bg-green-100 text-green-700',
+                    default => 'bg-gray-100 text-gray-600',
                   };
                 ?>
-                <span class="px-2 py-1 rounded-full text-xs font-medium text-nowrap <?php echo e($color); ?>">
-                  <?php echo e($order->status->label()); ?>
+                <span class="px-2 py-1 rounded-full text-xs font-medium <?php echo e($color); ?>">
+                  <?php echo e($order->status); ?>
 
                 </span>
               </td>
               <?php if(auth()->user()?->admin): ?>
                 <td class="px-5 py-3 text-right">
-                  <a href="<?php echo e(route('orders.edit', $order)); ?>" onclick="event.stopPropagation()"
-                    class="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400 font-medium transition">
-                    Edit
-                  </a>
+                  <a href="<?php echo e(route('orders.edit', $order)); ?>" onclick="event.stopPropagation()" class="text-blue-600 hover:text-blue-800 font-medium">Edit</a>
                   <button 
                     @click.prevent="
                       event.stopPropagation();
-                      title = '<?php echo e($order->code); ?>'; 
-                      deleteUrl = '<?php echo e(route('orders.destroy', $order)); ?>'; 
+                      title = '<?php echo e($order->code); ?>';
+                      deleteUrl = '<?php echo e(route('orders.destroy', $order)); ?>';
                       isModalOpen = true
                     "
-                    class="text-red-600 hover:text-red-700 dark:hover:text-red-400 ml-3 font-medium transition">
+                    class="text-red-600 hover:text-red-700 ml-3 font-medium">
                     Delete
                   </button>
                 </td>
@@ -213,7 +173,7 @@
             </tr>
           <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
             <tr>
-              <td colspan="7" class="px-5 py-6 text-center text-gray-500 dark:text-gray-400">
+              <td colspan="8" class="px-5 py-6 text-center text-gray-500">
                 No orders found.
               </td>
             </tr>
@@ -228,7 +188,6 @@
     </div>
   </div>
 
-  <!-- Delete Modal -->
   <?php if (isset($component)) { $__componentOriginalacfa148ccbbfb47f9db0a9452e7e721a = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalacfa148ccbbfb47f9db0a9452e7e721a = $attributes; } ?>
 <?php $component = App\View\Components\Modal\ModalDelete::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
@@ -256,8 +215,9 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     $('.select2').select2({
-      width: '100%',
-      minimumResultsForSearch: 0,
+      width: 'resolve',
+      minimumResultsForSearch: Infinity,
+      dropdownAutoWidth: true,
     });
   });
 </script>

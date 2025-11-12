@@ -19,6 +19,8 @@ use App\Http\Controllers\Customer\WishlistController;
 use App\Http\Controllers\ProfileAddressController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\WebSettingController;
+use App\Http\Middleware\CheckMaintenanceMode;
+use App\Http\Middleware\EnsureVendorApproved;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -71,14 +73,15 @@ Route::prefix('auth')->group(function () {
 });
 
 
-Route::get('/dashboard/orders-stats', [DashboardController::class, 'getOrdersStats'])->name('dashboard.orders.stats');
+Route::middleware([CheckMaintenanceMode::class])->get('/dashboard/orders-stats', [DashboardController::class, 'getOrdersStats'])->name('dashboard.orders.stats');
 
-Route::middleware(['auth'])
+Route::middleware(['auth', EnsureVendorApproved::class, CheckMaintenanceMode::class])
     ->prefix('dashboard')
     ->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
         Route::resource('categories', CategoryController::class);
         Route::resource('products', ProductController::class);
+        Route::get('/orders/export', [OrderController::class, 'export'])->name('orders.export');
         Route::resource('orders', OrderController::class);
         Route::put('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
         Route::resource('vendors', VendorController::class);

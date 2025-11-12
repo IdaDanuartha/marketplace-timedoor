@@ -30,182 +30,140 @@
 
   @if ($errors->any())
     <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-700/40 dark:bg-red-900/30 dark:text-red-300">
-      <div class="flex items-start gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M12 5a7 7 0 100 14 7 7 0 000-14z" />
-        </svg>
-        <ul class="space-y-1">
-          @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-          @endforeach
-        </ul>
-      </div>
+      <ul class="space-y-1">
+        @foreach ($errors->all() as $error)
+          <li>{{ $error }}</li>
+        @endforeach
+      </ul>
     </div>
   @endif
 
-  <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
-    <form method="GET" class="flex sm:flex-nowrap flex-wrap items-center gap-2">
-      <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search order..."
-        class="border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 w-64 bg-white dark:bg-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+  <!-- Filters -->
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-6">
+    <form method="GET" class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+      <input type="text" 
+        name="search" 
+        value="{{ $filters['search'] ?? '' }}" 
+        placeholder="Search order or customer..." 
+        class="border border-gray-300 rounded-lg px-3 py-2 w-full sm:w-64 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      >
 
-      <select name="status" class="select2 w-20">
+      <select name="status" class="select2 rounded-lg border border-gray-300 px-3 py-2 w-[150px]">
         <option value="">All Status</option>
         @foreach ($statuses as $status)
-          <option value="{{ $status->name }}" {{ ($filters['status'] ?? '') === $status->name ? 'selected' : '' }}>
+          <option value="{{ $status->value }}" @selected(($filters['status'] ?? '') === $status->value)>
             {{ $status->label() }}
           </option>
         @endforeach
       </select>
 
-      <button class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+      <select name="payment_status" class="select2 rounded-lg border border-gray-300 px-3 py-2 w-[150px]">
+        <option value="">All Payment</option>
+        @foreach(['unpaid', 'paid', 'failed'] as $ps)
+          <option value="{{ $ps }}" @selected(($filters['payment_status'] ?? '') === $ps)>
+            {{ ucfirst($ps) }}
+          </option>
+        @endforeach
+      </select>
+
+      <select name="payment_method" class="select2 rounded-lg border border-gray-300 px-3 py-2 w-[160px]">
+        <option value="">All Methods</option>
+        @foreach(['bank_transfer', 'gopay', 'qris', 'credit_card'] as $method)
+          <option value="{{ $method }}" @selected(($filters['payment_method'] ?? '') === $method)>
+            {{ ucwords(str_replace('_', ' ', $method)) }}
+          </option>
+        @endforeach
+      </select>
+
+      <div class="flex gap-3">
+        <input type="date" 
+          name="date_from" 
+          value="{{ $filters['date_from'] ?? '' }}" 
+          class="border border-gray-300 rounded-lg px-3 py-2 w-40"
+        >
+        <input type="date" 
+          name="date_to" 
+          value="{{ $filters['date_to'] ?? '' }}" 
+          class="border border-gray-300 rounded-lg px-3 py-2 w-40"
+        >
+      </div>
+
+      <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition whitespace-nowrap">
         Filter
       </button>
     </form>
 
     @if (auth()->user()?->admin)
       <a href="{{ route('orders.create') }}" 
-        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition whitespace-nowrap w-full sm:w-auto text-center">
         + Add Order
       </a>
     @endif
   </div>
 
+  <div class="flex justify-end mb-4">
+    <a href="{{ route('orders.export', request()->query()) }}" 
+      class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition whitespace-nowrap">
+      Export Excel
+    </a>
+  </div>
   <!-- Table -->
-  <div class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900/50">
+  <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
     <div class="max-w-full overflow-x-auto">
       <table class="min-w-full text-left text-sm">
-        <thead class="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/30">
+        <thead class="border-b border-gray-100 bg-gray-50">
           <tr>
-            <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300">
-              <a href="{{ route('orders.index', [
-                'sort_by' => 'code',
-                'sort_dir' => ($filters['sort_by'] ?? '') === 'code' && ($filters['sort_dir'] ?? '') === 'asc' ? 'desc' : 'asc',
-                'search' => $filters['search'] ?? '',
-              ]) }}" class="flex items-center gap-1 hover:underline">
-                Code
-                @if(($filters['sort_by'] ?? '') === 'code')
-                  @if(($filters['sort_dir'] ?? '') === 'asc')
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
-                    </svg>
-                  @else
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                  @endif
-                @endif
-              </a>
-            </th>
-
-            <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300">Customer</th>
-
-            <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300">
-              <a href="{{ route('orders.index', [
-                'sort_by' => 'total_price',
-                'sort_dir' => ($filters['sort_by'] ?? '') === 'total_price' && ($filters['sort_dir'] ?? '') === 'asc' ? 'desc' : 'asc',
-                'search' => $filters['search'] ?? '',
-              ]) }}" class="flex items-center gap-1 hover:underline">
-                Total
-                @if(($filters['sort_by'] ?? '') === 'total_price')
-                  @if(($filters['sort_dir'] ?? '') === 'asc')
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
-                    </svg>
-                  @else
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                  @endif
-                @endif
-              </a>
-            </th>
-
-            <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300">
-              <a href="{{ route('orders.index', [
-                'sort_by' => 'shipping_cost',
-                'sort_dir' => ($filters['sort_by'] ?? '') === 'shipping_cost' && ($filters['sort_dir'] ?? '') === 'asc' ? 'desc' : 'asc',
-                'search' => $filters['search'] ?? '',
-              ]) }}" class="flex items-center gap-1 hover:underline">
-                Shipping
-                @if(($filters['sort_by'] ?? '') === 'shipping_cost')
-                  @if(($filters['sort_dir'] ?? '') === 'asc')
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
-                    </svg>
-                  @else
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                  @endif
-                @endif
-              </a>
-            </th>
-
-            <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300">
-              <a href="{{ route('orders.index', [
-                'sort_by' => 'status',
-                'sort_dir' => ($filters['sort_by'] ?? '') === 'status' && ($filters['sort_dir'] ?? '') === 'asc' ? 'desc' : 'asc',
-                'search' => $filters['search'] ?? '',
-              ]) }}" class="flex items-center gap-1 hover:underline">
-                Status
-                @if(($filters['sort_by'] ?? '') === 'status')
-                  @if(($filters['sort_dir'] ?? '') === 'asc')
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
-                    </svg>
-                  @else
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                  @endif
-                @endif
-              </a>
-            </th>
-
+            <th class="px-5 py-3 font-medium text-gray-600">Code</th>
+            <th class="px-5 py-3 font-medium text-gray-600">Customer</th>
+            <th class="px-5 py-3 font-medium text-gray-600">Total</th>
+            <th class="px-5 py-3 font-medium text-gray-600">Shipping</th>
+            <th class="px-5 py-3 font-medium text-gray-600">Grand Total</th>
+            <th class="px-5 py-3 font-medium text-gray-600">Payment</th>
+            <th class="px-5 py-3 font-medium text-gray-600">Status</th>
             @if (auth()->user()?->admin)
-              <th class="px-5 py-3 font-medium text-gray-600 dark:text-gray-300 text-right">Actions</th>
+              <th class="px-5 py-3 font-medium text-gray-600 text-right">Actions</th>
             @endif
           </tr>
         </thead>
-
-        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+        <tbody class="divide-y divide-gray-100">
           @forelse ($orders as $order)
-            <tr
-              onclick="window.location='{{ route('orders.show', $order) }}'"
-              class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors"
-            >
-              <td class="px-5 py-3 font-semibold text-gray-800 dark:text-gray-100">{{ $order->code }}</td>
-              <td class="px-5 py-3 text-gray-700 dark:text-gray-300">{{ $order->customer->name ?? '-' }}</td>
-              <td class="px-5 py-3 text-gray-700 dark:text-gray-300">Rp{{ number_format($order->total_price, 0, ',', '.') }}</td>
-              <td class="px-5 py-3 text-gray-700 dark:text-gray-300">Rp{{ number_format($order->shipping_cost, 0, ',', '.') }}</td>
+            <tr onclick="window.location='{{ route('orders.show', $order) }}'"
+              class="cursor-pointer hover:bg-gray-50 transition-colors">
+              <td class="px-5 py-3 font-semibold text-gray-800">{{ $order->code }}</td>
+              <td class="px-5 py-3 text-gray-700">{{ $order->customer->name ?? '-' }}</td>
+              <td class="px-5 py-3 text-gray-700">Rp{{ number_format($order->total_price, 0, ',', '.') }}</td>
+              <td class="px-5 py-3 text-gray-700">Rp{{ number_format($order->shipping_cost, 0, ',', '.') }}</td>
+              <td class="px-5 py-3 font-semibold text-gray-900">Rp{{ number_format($order->grand_total, 0, ',', '.') }}</td>
+              <td class="px-5 py-3 text-gray-700 space-y-1">
+                <span class="block text-xs font-semibold">{{ strtoupper($order->payment_status) }}</span>
+                <span class="block text-xs text-gray-500">{{ strtoupper($order->payment_method ?? '-') }}</span>
+              </td>
               <td class="px-5 py-3">
                 @php
                   $color = match($order->status) {
-                    \App\Enum\OrderStatus::PENDING => 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
-                    \App\Enum\OrderStatus::PROCESSING => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-                    \App\Enum\OrderStatus::SHIPPED => 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
-                    \App\Enum\OrderStatus::DELIVERED => 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
-                    \App\Enum\OrderStatus::CANCELED => 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
+                    \App\Enum\OrderStatus::PENDING => 'bg-yellow-100 text-yellow-700',
+                    \App\Enum\OrderStatus::PROCESSING => 'bg-blue-100 text-blue-700',
+                    \App\Enum\OrderStatus::CANCELED => 'bg-red-100 text-red-700',
+                    \App\Enum\OrderStatus::SHIPPED => 'bg-indigo-100 text-indigo-700',
+                    \App\Enum\OrderStatus::DELIVERED => 'bg-green-100 text-green-700',
+                    default => 'bg-gray-100 text-gray-600',
                   };
                 @endphp
-                <span class="px-2 py-1 rounded-full text-xs font-medium text-nowrap {{ $color }}">
-                  {{ $order->status->label() }}
+                <span class="px-2 py-1 rounded-full text-xs font-medium {{ $color }}">
+                  {{ $order->status }}
                 </span>
               </td>
               @if (auth()->user()?->admin)
                 <td class="px-5 py-3 text-right">
-                  <a href="{{ route('orders.edit', $order) }}" onclick="event.stopPropagation()"
-                    class="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400 font-medium transition">
-                    Edit
-                  </a>
+                  <a href="{{ route('orders.edit', $order) }}" onclick="event.stopPropagation()" class="text-blue-600 hover:text-blue-800 font-medium">Edit</a>
                   <button 
                     @click.prevent="
                       event.stopPropagation();
-                      title = '{{ $order->code }}'; 
-                      deleteUrl = '{{ route('orders.destroy', $order) }}'; 
+                      title = '{{ $order->code }}';
+                      deleteUrl = '{{ route('orders.destroy', $order) }}';
                       isModalOpen = true
                     "
-                    class="text-red-600 hover:text-red-700 dark:hover:text-red-400 ml-3 font-medium transition">
+                    class="text-red-600 hover:text-red-700 ml-3 font-medium">
                     Delete
                   </button>
                 </td>
@@ -213,7 +171,7 @@
             </tr>
           @empty
             <tr>
-              <td colspan="7" class="px-5 py-6 text-center text-gray-500 dark:text-gray-400">
+              <td colspan="8" class="px-5 py-6 text-center text-gray-500">
                 No orders found.
               </td>
             </tr>
@@ -227,7 +185,6 @@
     </div>
   </div>
 
-  <!-- Delete Modal -->
   <x-modal.modal-delete />
 </div>
 @endsection
@@ -236,8 +193,9 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     $('.select2').select2({
-      width: '100%',
-      minimumResultsForSearch: 0,
+      width: 'resolve',
+      minimumResultsForSearch: Infinity,
+      dropdownAutoWidth: true,
     });
   });
 </script>

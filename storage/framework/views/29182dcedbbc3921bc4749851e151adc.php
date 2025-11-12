@@ -138,10 +138,6 @@
           </svg>
         </button>
         <!-- Dark Mode Toggler -->
-
-        <!-- Notification Menu Area -->
-        
-        <!-- Notification Menu Area -->
       </div>
 
       <!-- User Area -->
@@ -185,10 +181,21 @@
               <?php echo e(auth()->user()->display_name ?? 'User'); ?>
 
             </span>
+
             <span class="text-theme-xs mt-0.5 block text-gray-500 dark:text-gray-400">
               <?php echo e(auth()->user()->email ?? '-'); ?>
 
             </span>
+
+            <?php if(auth()->user()->vendor): ?>
+              <div class="mt-2">
+                <?php if(auth()->user()->vendor?->is_approved): ?>
+                  <span class="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700">Approved</span>
+                <?php else: ?>
+                  <span class="px-2 py-0.5 text-xs rounded-full bg-yellow-100 text-yellow-700">Pending Approval</span>
+                <?php endif; ?>
+              </div>
+            <?php endif; ?>
           </div>
 
           <ul class="flex flex-col gap-1 border-b border-gray-200 pt-4 pb-3 dark:border-gray-800">

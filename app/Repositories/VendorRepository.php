@@ -3,11 +3,13 @@
 namespace App\Repositories;
 
 use App\Interfaces\VendorRepositoryInterface;
+use App\Mail\VendorApprovedNotification;
 use App\Models\User;
 use App\Models\Vendor;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Throwable;
 
 class VendorRepository implements VendorRepositoryInterface
@@ -93,6 +95,10 @@ class VendorRepository implements VendorRepositoryInterface
                     'address' => $data['address'] ?? null,
                     'is_approved' => $data['is_approved'] ?? false,
                 ]);
+
+                if($data['is_approved'] ?? false) {
+                    Mail::to($vendor->user->email)->send(new VendorApprovedNotification($vendor->name));
+                }
 
                 return $vendor;
             });

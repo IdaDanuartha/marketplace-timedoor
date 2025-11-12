@@ -125,11 +125,11 @@
                 <td class="py-2 px-3">
                   <span class="px-2 py-1 rounded-full text-xs font-medium
                     class="<?php echo \Illuminate\Support\Arr::toCssClasses([
-                      'bg-yellow-100 text-yellow-700' => $order->status->value === 'PENDING',
-                      'bg-blue-100 text-blue-700' => $order->status->value === 'PROCESSING',
-                      'bg-purple-100 text-purple-700' => $order->status->value === 'SHIPPED',
-                      'bg-green-100 text-green-700' => $order->status->value === 'DELIVERED',
-                      'bg-red-100 text-red-700' => $order->status->value === 'CANCELED',
+                      'bg-yellow-100 text-yellow-700' => $order->status === \App\Enum\OrderStatus::PENDING,
+                      'bg-blue-100 text-blue-700' => $order->status === \App\Enum\OrderStatus::PROCESSING,
+                      'bg-purple-100 text-purple-700' => $order->status === \App\Enum\OrderStatus::SHIPPED,
+                      'bg-green-100 text-green-700' => $order->status === \App\Enum\OrderStatus::DELIVERED,
+                      'bg-red-100 text-red-700' => $order->status === \App\Enum\OrderStatus::CANCELED,
                     ]); ?>"">
                     <?php echo e($order->status->label()); ?>
 

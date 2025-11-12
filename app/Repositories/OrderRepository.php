@@ -2,14 +2,12 @@
 
 namespace App\Repositories;
 
-use App\Enum\OrderStatus;
 use App\Interfaces\OrderRepositoryInterface;
 use App\Models\Order;
-use App\Models\OrderItem;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Throwable;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\OrdersExport;
+use Illuminate\Support\Arr;
 
 class OrderRepository implements OrderRepositoryInterface
 {
@@ -20,7 +18,7 @@ class OrderRepository implements OrderRepositoryInterface
 
     public function paginateWithFilters(array $filters, int $perPage = 10)
     {
-        $query = Order::with(['customer'])->latest();
+        $query = Order::with(['customer', 'items.product'])->latest();
 
         if (!empty($filters['search'])) {
             $search = trim($filters['search']);
@@ -34,8 +32,23 @@ class OrderRepository implements OrderRepositoryInterface
             $query->where('status', $filters['status']);
         }
 
+        if (!empty($filters['payment_status'])) {
+            $query->where('payment_status', $filters['payment_status']);
+        }
+
+        if (!empty($filters['payment_method'])) {
+            $query->where('payment_method', $filters['payment_method']);
+        }
+
+        if (!empty($filters['date_from']) && !empty($filters['date_to'])) {
+            $query->whereBetween('created_at', [
+                $filters['date_from'] . ' 00:00:00',
+                $filters['date_to'] . ' 23:59:59',
+            ]);
+        }
+
         if (!empty($filters['vendor_id'])) {
-            $query->whereHas('items.product', fn($q) => 
+            $query->whereHas('items.product', fn($q) =>
                 $q->where('vendor_id', $filters['vendor_id'])
             );
         }
@@ -51,15 +64,11 @@ class OrderRepository implements OrderRepositoryInterface
     public function create(array $data): Order
     {
         return DB::transaction(function () use ($data) {
-            $data['status'] = OrderStatus::from($data['status']);
-
-            $order = Order::create([
-                'code' => $data['code'] ?? 'ORD-' . strtoupper(uniqid()),
-                'customer_id' => $data['customer_id'],
-                'total_price' => $data['total_price'],
-                'shipping_cost' => $data['shipping_cost'],
-                'status' => $data['status'],
-            ]);
+            $order = Order::create(Arr::only($data, [
+                'code', 'customer_id', 'address_id',
+                'total_price', 'shipping_cost', 'grand_total',
+                'status', 'payment_method', 'payment_status', 'midtrans_transaction_id'
+            ]));
 
             foreach ($data['items'] ?? [] as $item) {
                 $order->items()->create([
@@ -76,8 +85,10 @@ class OrderRepository implements OrderRepositoryInterface
     public function update(Order $order, array $data): Order
     {
         return DB::transaction(function () use ($order, $data) {
-            $data['status'] = OrderStatus::from($data['status']);
-            $order->update(Arr::except($data, ['items']));
+            $order->update(Arr::only($data, [
+                'status', 'payment_method', 'payment_status',
+                'shipping_cost', 'grand_total'
+            ]));
 
             if (isset($data['items'])) {
                 $order->items()->delete();
@@ -97,5 +108,10 @@ class OrderRepository implements OrderRepositoryInterface
     public function delete(Order $order): bool
     {
         return DB::transaction(fn() => $order->delete());
+    }
+
+    public function export(array $filters)
+    {
+        return Excel::download(new OrdersExport($filters), 'orders.xlsx');
     }
 }

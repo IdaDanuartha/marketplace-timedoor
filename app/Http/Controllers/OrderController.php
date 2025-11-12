@@ -24,7 +24,7 @@ class OrderController extends Controller
     public function index()
     {
         try {
-            $filters = request()->only(['search', 'status']);
+            $filters = request()->only(['search', 'status', 'payment_status', 'payment_method', 'date_from', 'date_to']);
             $user = Auth::user();
 
             if ($user->vendor) {
@@ -152,6 +152,16 @@ class OrderController extends Controller
         } catch (Throwable $e) {
             Log::error('Failed to delete order: ' . $e->getMessage());
             return back()->withErrors('Failed to delete order.');
+        }
+    }
+
+    public function export(Request $request)
+    {
+        try {
+            return $this->orders->export($request->all());
+        } catch (\Throwable $e) {
+            Log::error('Failed to export orders: ' . $e->getMessage());
+            return back()->withErrors('Failed to export orders.');
         }
     }
 }

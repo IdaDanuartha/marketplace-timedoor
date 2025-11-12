@@ -84,7 +84,7 @@
       <?php endif; ?>
 
       
-      <?php if(auth()->user()?->vendor): ?>
+      <?php if(auth()->user()?->vendor && auth()->user()->vendor->is_approved): ?>
         <div>
           <h3 class="mb-4 text-xs uppercase leading-5 text-gray-400"
             :class="sidebarToggle ? 'lg:hidden' : ''">My Business</h3>
