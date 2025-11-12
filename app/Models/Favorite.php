@@ -7,4 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Favorite extends BaseModel
 {
     protected $guarded = [];
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

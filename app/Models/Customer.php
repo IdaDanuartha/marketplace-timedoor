@@ -31,7 +31,7 @@ class Customer extends BaseModel
         return $this->hasMany(Order::class);
     }
 
-    public function wishlistProducts()
+    public function wishlists()
     {
         return $this->belongsToMany(Product::class, 'favorites')->withTimestamps();
     }

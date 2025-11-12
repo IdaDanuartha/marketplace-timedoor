@@ -114,10 +114,9 @@ Route::middleware(['auth'])
             Route::patch('/orders/{order}/cancel', [CustomerOrderController::class, 'cancel'])->name('orders.cancel');
 
             Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
-            Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
 
-            Route::post('/wishlist/{product}', [WishlistController::class, 'store'])->name('wishlist.store');
-            Route::delete('/wishlist/{product}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
+            Route::post('/wishlist/{product}/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+            Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
 
             Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
             Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');

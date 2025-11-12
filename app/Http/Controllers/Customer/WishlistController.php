@@ -3,29 +3,41 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
-use Illuminate\Http\Request;
+use App\Models\{Favorite, Product};
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class WishlistController extends Controller
 {
     public function index()
     {
-        $wishlist = Auth::user()->customer?->wishlistProducts()->with('category')->get() ?? collect();
+        $customer = Auth::user()->customer;
+        $wishlist = Favorite::with('product.category')
+            ->where('customer_id', $customer->id)
+            ->latest()
+            ->get();
+
         return view('shop.wishlist.index', compact('wishlist'));
     }
 
-    public function store(Product $product)
+    public function toggle(Product $product)
     {
         $customer = Auth::user()->customer;
-        $customer->wishlistProducts()->syncWithoutDetaching([$product->id]);
-        return back()->with('success', 'Product added to wishlist.');
-    }
 
-    public function destroy(Product $product)
-    {
-        $customer = Auth::user()->customer;
-        $customer->wishlistProducts()->detach($product->id);
-        return back()->with('success', 'Product removed from wishlist.');
+        $existing = Favorite::where('customer_id', $customer->id)
+            ->where('product_id', $product->id)
+            ->first();
+
+        if ($existing) {
+            $existing->delete();
+            return back()->with('success', 'Removed from wishlist.');
+        }
+
+        Favorite::create([
+            'customer_id' => $customer->id,
+            'product_id' => $product->id,
+        ]);
+
+        return back()->with('success', 'Added to wishlist.');
     }
 }
