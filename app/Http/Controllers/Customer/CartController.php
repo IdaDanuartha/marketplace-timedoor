@@ -26,6 +26,10 @@ class CartController extends Controller
 
     public function store(Product $product)
     {
+        if ($product->stock < 1) {
+            return back()->withErrors('Product is out of stock.');
+        }
+
         $customer = Auth::user()->customer;
 
         $cart = Cart::firstOrCreate(
@@ -36,10 +40,20 @@ class CartController extends Controller
         $item = $cart->items()->where('product_id', $product->id)->first();
 
         if ($item) {
+
+            if ($item->qty + 1 > $product->stock) {
+                return back()->withErrors('Not enough stock available.');
+            }
+
             $item->qty++;
             $item->subtotal = $item->qty * $product->price;
             $item->save();
+
         } else {
+            if ($product->stock < 1) {
+                return back()->withErrors('Product is out of stock.');
+            }
+
             $cart->items()->create([
                 'product_id' => $product->id,
                 'qty' => 1,
@@ -54,7 +68,13 @@ class CartController extends Controller
 
     public function update(Request $request, CartItem $item)
     {
-        $request->validate(['qty' => 'required|integer|min:1']);
+        $request->validate([
+            'qty' => 'required|integer|min:1',
+        ]);
+
+        if ($request->qty > $item->product->stock) {
+            return back()->withErrors('Not enough stock available.');
+        }
 
         $item->update([
             'qty' => $request->qty,
@@ -102,6 +122,10 @@ class CartController extends Controller
 
     public function buyNow(Product $product)
     {
+        if ($product->stock < 1) {
+            return back()->withErrors('Product is out of stock.');
+        }
+
         $customer = Auth::user()->customer;
 
         $cart = Cart::firstOrCreate(

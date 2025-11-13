@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\{Cart, Order, OrderItem};
 use App\Enum\OrderStatus;
+use App\Enum\ProductStatus;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -65,12 +66,19 @@ class CheckoutController extends Controller
 
             // Insert order items
             foreach ($cart->items as $item) {
+                $product = $item->product;
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item->product_id,
                     'qty' => $item->qty,
                     'price' => $item->product->price,
                 ]);
+
+                if($product->stock - $item->qty === 0) {
+                    $product->update(['status' => ProductStatus::OUT_OF_STOCK]);
+                }
+
+                $item->delete();
             }
 
             // Midtrans payload

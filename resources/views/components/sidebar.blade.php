@@ -133,28 +133,52 @@
             </li>
 
             {{-- Wishlist --}}
-            <li>
-              <a href="{{ route('shop.wishlist.index') }}"
-                class="menu-item group {{ request()->is('dashboard/shop/wishlist*') ? 'menu-item-active' : 'menu-item-inactive' }}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="menu-item-icon" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                </svg>
-                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Wishlist</span>
-              </a>
+            <li class="relative">
+                <a href="{{ route('shop.wishlist.index') }}"
+                  class="menu-item group {{ request()->is('dashboard/shop/wishlist*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+
+                    <div class="relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="menu-item-icon" width="22" height="22" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+
+                        @if($wishlists_count > 0)
+                            <span
+                                class="absolute -top-2.5 -right-2.5 bg-red-600 text-white text-[10px] font-bold rounded-full px-2 -py-1">
+                                {{ $wishlists_count }}
+                            </span>
+                        @endif
+                    </div>
+
+                    <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Wishlist</span>
+                </a>
             </li>
 
             {{-- Cart --}}
-            <li>
-              <a href="{{ route('shop.cart.index') }}"
-                class="menu-item group {{ request()->is('dashboard/shop/cart*') ? 'menu-item-active' : 'menu-item-inactive' }}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="menu-item-icon" width="24" height="24" fill="none"
-                  viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                  <circle cx="9" cy="21" r="1"/>
-                  <circle cx="20" cy="21" r="1"/>
-                  <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.98-1.72L23 6H6" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Cart</span>
-              </a>
+            <li class="relative">
+                <a href="{{ route('shop.cart.index') }}"
+                  class="menu-item group {{ request()->is('dashboard/shop/cart*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+
+                    <div class="relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="menu-item-icon" width="24" height="24" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="9" cy="21" r="1"/>
+                            <circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.98-1.72L23 6H6"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+
+                        @if($cart_items_count > 0)
+                            <span
+                                class="absolute -top-2.5 -right-2.5 bg-red-600 text-white text-[10px] font-bold rounded-full px-2 -py-1">
+                                {{ $cart_items_count }}
+                            </span>
+                        @endif
+                    </div>
+
+                    <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">Cart</span>
+                </a>
             </li>
 
             {{-- Orders --}}

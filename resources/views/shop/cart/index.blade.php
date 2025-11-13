@@ -6,21 +6,23 @@
 <div class="max-w-5xl mx-auto py-8 space-y-6">
   <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Shopping Cart</h1>
 
+  {{-- Alerts --}}
   @if (session('success'))
-    <div class="p-3 bg-green-100 border border-green-300 text-green-800 rounded-lg">
-      {{ session('success') }}
-    </div>
+    <div class="p-3 bg-green-100 border border-green-300 text-green-800 rounded-lg mb-4">{{ session('success') }}</div>
+  @endif
+  @if ($errors->any())
+    <div class="p-3 bg-red-100 border border-red-300 text-red-800 rounded-lg mb-4">{{ $errors->first() }}</div>
   @endif
 
   @forelse ($cart->items as $item)
     <div class="flex items-center justify-between p-4 border dark:border-white/10 rounded-lg bg-white dark:bg-gray-900">
       <div class="flex items-center gap-4">
-        <a href="{{ route('shop.products.show', $item->product) }}">
+        <a href="{{ route('shop.products.show', $item->product->slug) }}">
           <img src="{{ profile_image($item->product->image_path) }}" 
              class="w-16 h-16 rounded object-cover">
         </a>
         <div>
-          <a href="{{ route('shop.products.show', $item->product) }}">
+          <a href="{{ route('shop.products.show', $item->product->slug) }}">
             <h3 class="font-semibold text-gray-900 dark:text-white">{{ $item->product->name }}</h3>
           </a>
           <p class="text-gray-500 dark:text-gray-400">Rp {{ number_format($item->product->price, 0, ',', '.') }}</p>

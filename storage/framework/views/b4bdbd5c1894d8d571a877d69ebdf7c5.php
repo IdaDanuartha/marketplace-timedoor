@@ -4,22 +4,23 @@
 <div class="max-w-5xl mx-auto py-8 space-y-6">
   <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Shopping Cart</h1>
 
+  
   <?php if(session('success')): ?>
-    <div class="p-3 bg-green-100 border border-green-300 text-green-800 rounded-lg">
-      <?php echo e(session('success')); ?>
-
-    </div>
+    <div class="p-3 bg-green-100 border border-green-300 text-green-800 rounded-lg mb-4"><?php echo e(session('success')); ?></div>
+  <?php endif; ?>
+  <?php if($errors->any()): ?>
+    <div class="p-3 bg-red-100 border border-red-300 text-red-800 rounded-lg mb-4"><?php echo e($errors->first()); ?></div>
   <?php endif; ?>
 
   <?php $__empty_1 = true; $__currentLoopData = $cart->items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
     <div class="flex items-center justify-between p-4 border dark:border-white/10 rounded-lg bg-white dark:bg-gray-900">
       <div class="flex items-center gap-4">
-        <a href="<?php echo e(route('shop.products.show', $item->product)); ?>">
+        <a href="<?php echo e(route('shop.products.show', $item->product->slug)); ?>">
           <img src="<?php echo e(profile_image($item->product->image_path)); ?>" 
              class="w-16 h-16 rounded object-cover">
         </a>
         <div>
-          <a href="<?php echo e(route('shop.products.show', $item->product)); ?>">
+          <a href="<?php echo e(route('shop.products.show', $item->product->slug)); ?>">
             <h3 class="font-semibold text-gray-900 dark:text-white"><?php echo e($item->product->name); ?></h3>
           </a>
           <p class="text-gray-500 dark:text-gray-400">Rp <?php echo e(number_format($item->product->price, 0, ',', '.')); ?></p>

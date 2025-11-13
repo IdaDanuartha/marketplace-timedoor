@@ -30,7 +30,11 @@
       <div class="flex items-start justify-between">
         <div>
           <h1 class="text-2xl font-bold text-gray-800 dark:text-white">{{ $product->name }}</h1>
-          <p class="text-gray-500 dark:text-gray-400 mt-1">{{ $product->category->name ?? 'Uncategorized' }}</p>
+          <div class="flex gap-3">
+            <p class="text-gray-500 dark:text-gray-400 mt-1">{{ $product->category->name ?? 'Uncategorized' }}</p>
+            <div class="text-gray-500 dark:text-gray-400 mt-1">|</div>
+            <div class="text-gray-500 dark:text-gray-400 mt-1">{{ $product->stock }} in stock</div>
+          </div>
         </div>
 
         {{-- Wishlist --}}
