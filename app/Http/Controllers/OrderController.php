@@ -6,6 +6,7 @@ use App\Enum\OrderStatus;
 use App\Http\Requests\Order\StoreOrderRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Interfaces\OrderRepositoryInterface;
+use App\Models\Address;
 use App\Models\Order;
 use App\Models\Customer;
 use App\Models\Product;
@@ -47,7 +48,7 @@ class OrderController extends Controller
         $statuses = OrderStatus::cases();
 
         $user = Auth::user();
-        if ($user->vendor && !$order->items->contains(fn($i) => $i->product->vendor_id === $user->vendor->id)) {
+        if ($user->vendo1r && !$order->items->contains(fn($i) => $i->product->vendor_id === $user->vendor->id)) {
             abort(403);
         }
 
@@ -58,17 +59,27 @@ class OrderController extends Controller
     {
         try {
             $user = Auth::user();
-            $customers = Customer::latest()->get();
             $statuses = OrderStatus::cases();
 
-            // Vendor hanya bisa membuat order dengan produknya sendiri
+            $customers = Customer::latest()->get();
+
+            $addresses = Address::latest()->get();
+
             $products = $user->vendor
                 ? Product::where('vendor_id', $user->vendor->id)->get()
                 : Product::latest()->get();
 
-            return view('admin.orders.create', compact('customers', 'products', 'statuses'));
+            return view('admin.orders.create', compact(
+                'customers',
+                'addresses',
+                'products',
+                'statuses'
+            ));
         } catch (Throwable $e) {
-            Log::error('Failed to open create form: ' . $e->getMessage());
+            Log::error('Failed to open create form: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return back()->withErrors('Unable to open create form.');
         }
     }
@@ -102,8 +113,9 @@ class OrderController extends Controller
                 : Product::latest()->get();
 
             $order->load('items.product');
+            $addresses = Address::latest()->get();
 
-            return view('admin.orders.edit', compact('order', 'customers', 'products', 'statuses'));
+            return view('admin.orders.edit', compact('order', 'customers', 'products', 'statuses', 'addresses'));
         } catch (Throwable $e) {
             Log::error('Failed to open edit form: ' . $e->getMessage());
             return back()->withErrors('Unable to open edit form.');
@@ -163,5 +175,15 @@ class OrderController extends Controller
             Log::error('Failed to export orders: ' . $e->getMessage());
             return back()->withErrors('Failed to export orders.');
         }
+    }
+
+    public function getAddresses(Customer $customer)
+    {
+        $addresses = $customer->addresses()
+            ->select('addresses.id', 'addresses.label', 'addresses.full_address')
+            ->orderBy('addresses.created_at', 'desc')
+            ->get();
+
+        return response()->json($addresses);
     }
 }

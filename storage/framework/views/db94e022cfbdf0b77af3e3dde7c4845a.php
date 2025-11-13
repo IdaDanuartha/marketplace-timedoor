@@ -41,16 +41,84 @@
     </div>
   <?php endif; ?>
 
-  <!-- Top actions -->
-  <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
-    <form method="GET" class="flex items-center gap-2">
-      <input type="text" name="search" value="<?php echo e($filters['search'] ?? ''); ?>" placeholder="Search product..."
-        class="border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 w-64 bg-white dark:bg-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-      <button class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-        Search
-      </button>
-    </form>
+  <!-- FILTERS -->
+  <form method="GET" class="w-full mb-6 space-y-4">
 
+    <!-- Row 1: Search -->
+    <div class="flex items-center gap-2">
+        <input 
+            type="text" 
+            name="search" 
+            value="<?php echo e(request('search')); ?>" 
+            placeholder="Search product..."
+            class="border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 w-full bg-white dark:bg-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+
+        <button
+        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        Apply
+      </button>
+      <a href="<?php echo e(route('products.index')); ?>" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
+          Clear
+      </a>
+    </div>
+
+    <!-- Row 2: Filters -->
+    <div class="grid md:grid-cols-4 gap-3">
+
+        <!-- Category -->
+        <select name="category" class="select2 w-full">
+            <option value="">All Categories</option>
+            <?php $__currentLoopData = \App\Models\Category::orderBy('name')->get(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $c): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <option value="<?php echo e($c->id); ?>" 
+                  <?php echo e(request('category') == $c->id ? 'selected' : ''); ?>>
+                  <?php echo e($c->name); ?>
+
+                </option>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </select>
+
+        <!-- Vendor -->
+        <?php if(auth()->user()?->admin): ?>
+        <select name="vendor" class="select2 w-full">
+            <option value="">All Vendors</option>
+            <?php $__currentLoopData = \App\Models\Vendor::orderBy('name')->get(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $v): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <option value="<?php echo e($v->id); ?>" 
+                  <?php echo e(request('vendor') == $v->id ? 'selected' : ''); ?>>
+                  <?php echo e($v->name); ?>
+
+                </option>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </select>
+        <?php endif; ?>
+
+        <!-- Status -->
+        <select name="status" class="select2 w-full">
+            <option value="">All Status</option>
+            <?php $__currentLoopData = \App\Enum\ProductStatus::cases(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $status): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <option value="<?php echo e($status->name); ?>"
+                  <?php echo e(request('status') == $status->name ? 'selected' : ''); ?>>
+                  <?php echo e($status->label()); ?>
+
+                </option>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </select>
+
+        <!-- Price Range -->
+        <select name="price" class="select2 w-full">
+            <option value="">Any Price</option>
+            <option value="0-100000" <?php echo e(request('price') == '0-100000' ? 'selected' : ''); ?>>Under 100k</option>
+            <option value="100000-300000" <?php echo e(request('price') == '100000-300000' ? 'selected' : ''); ?>>100k - 300k</option>
+            <option value="300000-700000" <?php echo e(request('price') == '300000-700000' ? 'selected' : ''); ?>>300k - 700k</option>
+            <option value="700000-1000000" <?php echo e(request('price') == '700000-1000000' ? 'selected' : ''); ?>>700k - 1M</option>
+            <option value="1000000-9999999" <?php echo e(request('price') == '1000000-9999999' ? 'selected' : ''); ?>>Above 1M</option>
+        </select>
+    </div>
+
+  </form>
+
+  <!-- Top actions -->
+  <div class="flex flex-col sm:flex-row justify-end items-center mb-6 gap-3">
     <a href="<?php echo e(route('products.create')); ?>" 
         class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
       + Add Product
@@ -246,4 +314,15 @@
   </div>
 </div>
 <?php $__env->stopSection(); ?>
+
+<?php $__env->startPush('js'); ?>
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            width: '100%',
+            minimumResultsForSearch: 0,
+        });
+    });
+</script>
+<?php $__env->stopPush(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /Users/gusde/Documents/laravel/marketplace-timedoor/resources/views/admin/products/index.blade.php ENDPATH**/ ?>

@@ -45,7 +45,7 @@
         name="search" 
         value="{{ $filters['search'] ?? '' }}" 
         placeholder="Search order or customer..." 
-        class="border border-gray-300 rounded-lg px-3 py-2 w-full sm:w-64 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        class="border border-gray-300 rounded-lg px-3 py-2 w-full sm:w-64 bg-white dark:bg-transparent dark:border-white/20 dark:text-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
       >
 
       <select name="status" class="select2 rounded-lg border border-gray-300 px-3 py-2 w-[150px]">
@@ -92,6 +92,13 @@
         Filter
       </button>
     </form>
+  </div>
+
+  <div class="flex justify-end gap-4 mb-4">
+    <a href="{{ route('orders.export', request()->query()) }}" 
+      class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition whitespace-nowrap">
+      Export Excel
+    </a>
 
     @if (auth()->user()?->admin)
       <a href="{{ route('orders.create') }}" 
@@ -100,28 +107,21 @@
       </a>
     @endif
   </div>
-
-  <div class="flex justify-end mb-4">
-    <a href="{{ route('orders.export', request()->query()) }}" 
-      class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition whitespace-nowrap">
-      Export Excel
-    </a>
-  </div>
   <!-- Table -->
-  <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+  <div class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:bg-transparent dark:border-white/20 shadow-sm">
     <div class="max-w-full overflow-x-auto">
       <table class="min-w-full text-left text-sm">
-        <thead class="border-b border-gray-100 bg-gray-50">
+        <thead class="border-b border-gray-100 bg-gray-50 dark:border-white/20 dark:bg-white/5">
           <tr>
-            <th class="px-5 py-3 font-medium text-gray-600">Code</th>
-            <th class="px-5 py-3 font-medium text-gray-600">Customer</th>
-            <th class="px-5 py-3 font-medium text-gray-600">Total</th>
-            <th class="px-5 py-3 font-medium text-gray-600">Shipping</th>
-            <th class="px-5 py-3 font-medium text-gray-600">Grand Total</th>
-            <th class="px-5 py-3 font-medium text-gray-600">Payment</th>
-            <th class="px-5 py-3 font-medium text-gray-600">Status</th>
+            <th class="px-5 py-3 font-medium text-gray-600 dark:text-white">Code</th>
+            <th class="px-5 py-3 font-medium text-gray-600 dark:text-white">Customer</th>
+            <th class="px-5 py-3 font-medium text-gray-600 dark:text-white">Total</th>
+            <th class="px-5 py-3 font-medium text-gray-600 dark:text-white">Shipping</th>
+            <th class="px-5 py-3 font-medium text-gray-600 dark:text-white">Grand Total</th>
+            <th class="px-5 py-3 font-medium text-gray-600 dark:text-white">Payment</th>
+            <th class="px-5 py-3 font-medium text-gray-600 dark:text-white">Status</th>
             @if (auth()->user()?->admin)
-              <th class="px-5 py-3 font-medium text-gray-600 text-right">Actions</th>
+              <th class="px-5 py-3 font-medium text-gray-600 dark:text-white text-right">Actions</th>
             @endif
           </tr>
         </thead>

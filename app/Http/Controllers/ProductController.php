@@ -25,12 +25,24 @@ class ProductController extends Controller
     public function index()
     {
         try {
-            $filters = request()->only(['search', 'sort_by', 'sort_dir', 'status']);
+            $filters = request()->only([
+                'search',
+                'sort_by',
+                'sort_dir',
+                'category',
+                'status',
+                'price'
+            ]);
             
             $user = Auth::user();
             if ($user->vendor) {
                 // Vendor only see their own products
-                $filters['vendor_id'] = $user->vendor->id;
+                $filters['vendor'] = $user->vendor->id;
+            }
+
+            if($user->admin) {
+                // Admin can filter by vendor
+                $filters['vendor'] = request()->get('vendor');
             }
 
             $products = $this->products->paginateWithFilters($filters, 10);

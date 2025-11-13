@@ -45,9 +45,22 @@ class ProductRepository implements ProductRepositoryInterface
             $query->where('status', $filters['status']);
         }
 
-        if (!empty($filters['vendor_id'])) {
-            $query->where('vendor_id', $filters['vendor_id']);
+        // Category filter
+        if (!empty($filters['category'])) {
+            $query->where('category_id', $filters['category']);
         }
+
+        // Vendor filter
+        if (!empty($filters['vendor'])) {
+            $query->where('vendor_id', $filters['vendor']);
+        }
+
+        // Price filter
+        if (!empty($filters['price'])) {
+            [$min, $max] = explode('-', $filters['price']);
+            $query->whereBetween('price', [$min, $max]);
+        }
+
 
         // Sorting
         $sortBy = $filters['sort_by'] ?? 'created_at';

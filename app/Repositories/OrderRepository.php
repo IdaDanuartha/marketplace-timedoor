@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\OrdersExport;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class OrderRepository implements OrderRepositoryInterface
 {
@@ -64,12 +65,19 @@ class OrderRepository implements OrderRepositoryInterface
     public function create(array $data): Order
     {
         return DB::transaction(function () use ($data) {
+            $data['code'] = $data['code'] ?? 'ORD-' . strtoupper(Str::random(8));
+            $data['payment_status'] = $data['payment_status'] ?? 'unpaid';
+            $data['shipping_cost'] = $data['shipping_cost'] ?? 0;
+            $data['grand_total'] = $data['total_price'] + $data['shipping_cost'];
+
+            // Simpan order utama
             $order = Order::create(Arr::only($data, [
                 'code', 'customer_id', 'address_id',
                 'total_price', 'shipping_cost', 'grand_total',
                 'status', 'payment_method', 'payment_status', 'midtrans_transaction_id'
             ]));
 
+            // Simpan item detail
             foreach ($data['items'] ?? [] as $item) {
                 $order->items()->create([
                     'product_id' => $item['product_id'],
@@ -85,6 +93,9 @@ class OrderRepository implements OrderRepositoryInterface
     public function update(Order $order, array $data): Order
     {
         return DB::transaction(function () use ($order, $data) {
+            $data['grand_total'] = ($data['total_price'] ?? $order->total_price)
+                + ($data['shipping_cost'] ?? $order->shipping_cost);
+
             $order->update(Arr::only($data, [
                 'status', 'payment_method', 'payment_status',
                 'shipping_cost', 'grand_total'
@@ -112,6 +123,6 @@ class OrderRepository implements OrderRepositoryInterface
 
     public function export(array $filters)
     {
-        return Excel::download(new OrdersExport($filters), 'orders.xlsx');
+        return Excel::download(new OrdersExport($filters), 'orders-' . now()->format('YmdHis') . '.xlsx');
     }
 }

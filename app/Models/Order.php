@@ -32,4 +32,14 @@ class Order extends BaseModel
     {
         return $this->belongsTo(Address::class);
     }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', OrderStatus::PENDING);
+    }
+
+    public function scopeCompleted($query)
+    {
+        return $query->where('status', OrderStatus::DELIVERED);
+    }
 }

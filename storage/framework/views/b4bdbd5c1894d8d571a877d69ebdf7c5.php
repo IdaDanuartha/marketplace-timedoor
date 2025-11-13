@@ -12,7 +12,7 @@
   <?php endif; ?>
 
   <?php $__empty_1 = true; $__currentLoopData = $cart->items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-    <div class="flex items-center justify-between p-4 border rounded-lg bg-white dark:bg-gray-900">
+    <div class="flex items-center justify-between p-4 border dark:border-white/10 rounded-lg bg-white dark:bg-gray-900">
       <div class="flex items-center gap-4">
         <a href="<?php echo e(route('shop.products.show', $item->product)); ?>">
           <img src="<?php echo e(profile_image($item->product->image_path)); ?>" 
@@ -53,7 +53,7 @@
       <div class="flex items-center gap-3">
         <form action="<?php echo e(route('shop.cart.clear')); ?>" method="POST">
           <?php echo csrf_field(); ?>
-          <button class="px-5 py-3 text-sm bg-gray-100 dark:bg-gray-800 border rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
+          <button class="px-5 py-3 text-sm bg-gray-100 dark:text-white dark:border-white/10 dark:bg-gray-800 border rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
             Clear Cart
           </button>
         </form>

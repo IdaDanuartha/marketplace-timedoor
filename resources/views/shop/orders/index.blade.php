@@ -13,7 +13,7 @@
   @else
     <div class="space-y-5">
       @foreach($orders as $order)
-        <div class="border rounded-lg bg-white dark:bg-gray-900 p-5 hover:shadow-md transition">
+        <div class="border dark:border-white/10 rounded-lg bg-white dark:bg-gray-900 p-5 hover:shadow-md transition">
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div>
               <h2 class="font-semibold text-gray-800 dark:text-white">Order #{{ $order->code }}</h2>
@@ -23,17 +23,19 @@
             </div>
 
             <div class="flex items-center gap-2">
-              <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                @class([
-                  'bg-yellow-100 text-yellow-700' => $order->status->value === 'PENDING',
-                  'bg-blue-100 text-blue-700' => $order->status->value === 'PROCESSING',
-                  'bg-purple-100 text-purple-700' => $order->status->value === 'SHIPPED',
-                  'bg-green-100 text-green-700' => $order->status->value === 'DELIVERED',
-                  'bg-red-100 text-red-700' => $order->status->value === 'CANCELED',
-                ])">
+                @php
+                $color = match($order->status) {
+                    \App\Enum\OrderStatus::PENDING => 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
+                    \App\Enum\OrderStatus::PROCESSING => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+                    \App\Enum\OrderStatus::SHIPPED => 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
+                    \App\Enum\OrderStatus::DELIVERED => 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
+                    \App\Enum\OrderStatus::CANCELED => 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
+                };
+                @endphp
+                <span class="px-2 py-1 rounded-full text-xs font-medium text-nowrap {{ $color }}">
                 {{ $order->status->label() }}
-              </span>
-              <span class="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                </span>
+              <span class="px-2 py-1 text-xs rounded-full uppercase {{ $order->payment_status === 'PAID' || $order->payment_status === 'paid' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' }}">
                 {{ $order->payment_status }}
               </span>
             </div>

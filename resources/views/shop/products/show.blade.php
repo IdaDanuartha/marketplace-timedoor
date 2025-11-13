@@ -92,7 +92,7 @@
         </h2>
 
         {{-- Average Rating --}}
-        @php $avg = round($product->averageRating(), 1); @endphp
+        @php $avg = round($product->average_rating, 1); @endphp
         <div class="flex items-center gap-2">
           <div class="flex">
             @for ($i = 1; $i <= 5; $i++)

@@ -32,8 +32,13 @@ class Product extends BaseModel
         return $this->hasMany(Review::class);
     }
 
-    public function averageRating()
+    public function getAverageRatingAttribute()
     {
         return $this->reviews()->avg('rating') ?? 0;
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', ProductStatus::ACTIVE);
     }
 }

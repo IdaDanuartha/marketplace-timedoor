@@ -13,7 +13,7 @@
   @endif
 
   @forelse ($cart->items as $item)
-    <div class="flex items-center justify-between p-4 border rounded-lg bg-white dark:bg-gray-900">
+    <div class="flex items-center justify-between p-4 border dark:border-white/10 rounded-lg bg-white dark:bg-gray-900">
       <div class="flex items-center gap-4">
         <a href="{{ route('shop.products.show', $item->product) }}">
           <img src="{{ profile_image($item->product->image_path) }}" 
@@ -54,7 +54,7 @@
       <div class="flex items-center gap-3">
         <form action="{{ route('shop.cart.clear') }}" method="POST">
           @csrf
-          <button class="px-5 py-3 text-sm bg-gray-100 dark:bg-gray-800 border rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
+          <button class="px-5 py-3 text-sm bg-gray-100 dark:text-white dark:border-white/10 dark:bg-gray-800 border rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
             Clear Cart
           </button>
         </form>

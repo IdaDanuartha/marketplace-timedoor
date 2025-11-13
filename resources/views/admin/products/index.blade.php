@@ -43,16 +43,81 @@
     </div>
   @endif
 
-  <!-- Top actions -->
-  <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
-    <form method="GET" class="flex items-center gap-2">
-      <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search product..."
-        class="border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 w-64 bg-white dark:bg-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-      <button class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-        Search
-      </button>
-    </form>
+  <!-- FILTERS -->
+  <form method="GET" class="w-full mb-6 space-y-4">
 
+    <!-- Row 1: Search -->
+    <div class="flex items-center gap-2">
+        <input 
+            type="text" 
+            name="search" 
+            value="{{ request('search') }}" 
+            placeholder="Search product..."
+            class="border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 w-full bg-white dark:bg-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+
+        <button
+        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        Apply
+      </button>
+      <a href="{{ route('products.index') }}" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
+          Clear
+      </a>
+    </div>
+
+    <!-- Row 2: Filters -->
+    <div class="grid md:grid-cols-4 gap-3">
+
+        <!-- Category -->
+        <select name="category" class="select2 w-full">
+            <option value="">All Categories</option>
+            @foreach(\App\Models\Category::orderBy('name')->get() as $c)
+                <option value="{{ $c->id }}" 
+                  {{ request('category') == $c->id ? 'selected' : '' }}>
+                  {{ $c->name }}
+                </option>
+            @endforeach
+        </select>
+
+        <!-- Vendor -->
+        @if(auth()->user()?->admin)
+        <select name="vendor" class="select2 w-full">
+            <option value="">All Vendors</option>
+            @foreach(\App\Models\Vendor::orderBy('name')->get() as $v)
+                <option value="{{ $v->id }}" 
+                  {{ request('vendor') == $v->id ? 'selected' : '' }}>
+                  {{ $v->name }}
+                </option>
+            @endforeach
+        </select>
+        @endif
+
+        <!-- Status -->
+        <select name="status" class="select2 w-full">
+            <option value="">All Status</option>
+            @foreach(\App\Enum\ProductStatus::cases() as $status)
+                <option value="{{ $status->name }}"
+                  {{ request('status') == $status->name ? 'selected' : '' }}>
+                  {{ $status->label() }}
+                </option>
+            @endforeach
+        </select>
+
+        <!-- Price Range -->
+        <select name="price" class="select2 w-full">
+            <option value="">Any Price</option>
+            <option value="0-100000" {{ request('price') == '0-100000' ? 'selected' : '' }}>Under 100k</option>
+            <option value="100000-300000" {{ request('price') == '100000-300000' ? 'selected' : '' }}>100k - 300k</option>
+            <option value="300000-700000" {{ request('price') == '300000-700000' ? 'selected' : '' }}>300k - 700k</option>
+            <option value="700000-1000000" {{ request('price') == '700000-1000000' ? 'selected' : '' }}>700k - 1M</option>
+            <option value="1000000-9999999" {{ request('price') == '1000000-9999999' ? 'selected' : '' }}>Above 1M</option>
+        </select>
+    </div>
+
+  </form>
+
+  <!-- Top actions -->
+  <div class="flex flex-col sm:flex-row justify-end items-center mb-6 gap-3">
     <a href="{{ route('products.create') }}" 
         class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
       + Add Product
@@ -223,3 +288,14 @@
   </div>
 </div>
 @endsection
+
+@push('js')
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            width: '100%',
+            minimumResultsForSearch: 0,
+        });
+    });
+</script>
+@endpush
