@@ -105,6 +105,6 @@
   window.chartData = <?php echo json_encode($chartData, 15, 512) ?>;
   window.topProducts = <?php echo json_encode($topProducts, 15, 512) ?>;
 </script>
-<script type="module" src="<?php echo e(mix('js/charts/dashboard.js')); ?>"></script>
+
 <?php $__env->stopPush(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /Users/gusde/Documents/laravel/marketplace-timedoor/resources/views/admin/dashboard/index.blade.php ENDPATH**/ ?>

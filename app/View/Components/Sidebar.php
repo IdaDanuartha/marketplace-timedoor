@@ -24,13 +24,19 @@ class Sidebar extends Component
      */
     public function render(): View|Closure|string
     {
-        $cart_items_count = Cart::where('customer_id', Auth::user()->customer->id)
-            ->withCount('items')
-            ->first()
-            ?->items_count ?? 0;
-        $wishlists_count = Auth::user()->customer
-            ?->wishlists()
-            ->count() ?? 0;
+        $cart_items_count = 0;
+        $wishlists_count = 0;
+
+        if (Auth::check() && Auth::user()->customer) {
+            $customer = Auth::user()->customer;
+
+            $cart = Cart::with('items')->where('customer_id', $customer->id)->first();
+            if ($cart) {
+                $cart_items_count = $cart->items->count();
+            }
+
+            $wishlists_count = $customer->wishlists()->count();
+        }
 
         return view('components.sidebar', compact('cart_items_count', 'wishlists_count'));
     }
