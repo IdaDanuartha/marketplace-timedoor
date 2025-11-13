@@ -2,64 +2,6 @@
 
 <?php $__env->startSection('content'); ?>
 <div class="space-y-8" x-data="{ isModalOpen: false, deleteUrl: '', title: '' }">
-
-  <!-- Cancel Modal -->
-  <div
-    x-show="isModalOpen"
-    x-cloak
-    class="fixed inset-0 flex items-center justify-center p-5 z-[99999]"
-  >
-    <!-- Backdrop -->
-    <div @click="isModalOpen = false" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm"></div>
-
-    <!-- Modal -->
-    <div
-      @click.outside="isModalOpen = false"
-      class="relative w-full max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-lg p-6"
-    >
-      <!-- Header -->
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">
-          Cancel <span x-text="title" class="capitalize"></span>
-        </h2>
-        <button 
-          @click="isModalOpen = false"
-          class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-        >
-          ✕
-        </button>
-      </div>
-
-      <!-- Body -->
-      <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">
-        Are you sure you want to cancel 
-        <b class="text-gray-800 dark:text-gray-200 lowercase" x-text="title"></b>?<br>
-        This action cannot be undone.
-      </p>
-
-      <!-- Actions -->
-      <div class="flex justify-end gap-3">
-        <button 
-          @click="isModalOpen = false"
-          class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition"
-        >
-          Back
-        </button>
-
-        <form :action="deleteUrl" method="POST">
-          <?php echo csrf_field(); ?>
-          <?php echo method_field('PATCH'); ?>
-          <button 
-            type="submit"
-            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-sm rounded-lg text-white transition"
-          >
-            Confirm Cancel
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-
   <!-- METRICS -->
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
     <?php $__currentLoopData = $metrics; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $metric): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -140,7 +82,7 @@
 
                 </td>
                 <td class="py-2 px-3 text-right flex justify-end gap-2">
-                  <a href="<?php echo e(route('shop.orders.show', $order)); ?>"
+                  <a href="<?php echo e(route('shop.orders.show', $order->code)); ?>"
                      class="text-xs px-3 py-1.5 rounded-lg border text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
                     View
                   </a>
@@ -169,8 +111,26 @@
     <?php endif; ?>
   </div>
 
-  <!-- ORDER LOG ACTIVITY -->
-  
+  <?php if (isset($component)) { $__componentOriginal1bb765878b9e0d6ed85f9c12a3781acf = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal1bb765878b9e0d6ed85f9c12a3781acf = $attributes; } ?>
+<?php $component = App\View\Components\Modal\CancelOrderModal::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('modal.cancel-order-modal'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\Modal\CancelOrderModal::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal1bb765878b9e0d6ed85f9c12a3781acf)): ?>
+<?php $attributes = $__attributesOriginal1bb765878b9e0d6ed85f9c12a3781acf; ?>
+<?php unset($__attributesOriginal1bb765878b9e0d6ed85f9c12a3781acf); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal1bb765878b9e0d6ed85f9c12a3781acf)): ?>
+<?php $component = $__componentOriginal1bb765878b9e0d6ed85f9c12a3781acf; ?>
+<?php unset($__componentOriginal1bb765878b9e0d6ed85f9c12a3781acf); ?>
+<?php endif; ?>
 </div>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /Users/gusde/Documents/laravel/marketplace-timedoor/resources/views/customer/dashboard/index.blade.php ENDPATH**/ ?>

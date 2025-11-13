@@ -82,8 +82,6 @@ class ProductRepository implements ProductRepositoryInterface
             if (isset($data['image_path']) && $data['image_path'] instanceof \Illuminate\Http\UploadedFile) {
                 $data['image_path'] = $this->fileService->uploadImage($data['image_path'], 'products');
             }
-
-            $data['slug'] = Str::slug($data['name']);
             return Product::create($data);
         });
     }
@@ -95,8 +93,6 @@ class ProductRepository implements ProductRepositoryInterface
                 $this->fileService->deleteFile($product->image_path);
                 $data['image_path'] = $this->fileService->uploadImage($data['image_path'], 'products');
             }
-
-            $data['slug'] = Str::slug($data['name']);
             $product->update($data);
             return $product;
         });

@@ -94,7 +94,7 @@
         </h2>
 
         
-        <?php $avg = round($product->averageRating(), 1); ?>
+        <?php $avg = round($product->average_rating, 1); ?>
         <div class="flex items-center gap-2">
           <div class="flex">
             <?php for($i = 1; $i <= 5; $i++): ?>

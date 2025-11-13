@@ -85,8 +85,8 @@
     </div>
 
     <!-- Button -->
-    <div class="md:col-span-5 flex justify-end">
-        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+    <div class="w-full">
+        <button class="px-4 py-2 w-full bg-blue-600 text-white rounded-lg hover:bg-blue-700">
             Apply Filters
         </button>
     </div>
@@ -121,7 +121,7 @@
           </button>
         </form>
 
-        <a href="{{ route('shop.products.show', $product) }}">
+        <a href="{{ route('shop.products.show', $product->slug) }}">
           <img src="{{ profile_image($product->image_path) }}" alt="{{ $product->name }}"
             class="w-full h-48 object-cover rounded mb-3">
           <h2 class="font-semibold text-gray-800 dark:text-white truncate">{{ $product->name }}</h2>

@@ -21,10 +21,14 @@ class OrderController extends Controller
         return view('shop.orders.index', compact('orders'));
     }
 
-    public function show(Order $order)
+    public function show($orderCode)
     {
         // $this->authorize('view', $order);
-        $order->load('items.product');
+        $customer = Auth::user()->customer;
+        $order = Order::where('code', $orderCode)
+            ->where('customer_id', $customer->id)
+            ->firstOrFail()
+            ->load(['items.product']);
         return view('shop.orders.show', compact('order'));
     }
 
@@ -36,9 +40,11 @@ class OrderController extends Controller
             return redirect()->route('shop.orders.show', $order)->withErrors('This order has already been paid.');
         }
 
+        $midtransOrderId = $order->generatePaymentId();
+
         $payload = [
             'transaction_details' => [
-                'order_id' => $order->code,
+                'order_id' => $midtransOrderId,
                 'gross_amount' => $order->grand_total,
             ],
             'customer_details' => [

@@ -102,7 +102,7 @@ Route::middleware(['auth', EnsureVendorApproved::class, CheckMaintenanceMode::cl
 
         Route::prefix('shop')->name('shop.')->group(function () {
             Route::get('/', [ShopController::class, 'index'])->name('products.index');
-            Route::get('/products/{product}', [ShopController::class, 'show'])->name('products.show');
+            Route::get('/products/{productSlug}', [ShopController::class, 'show'])->name('products.show');
             Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
             Route::post('/cart/add/{product}', [CartController::class, 'store'])->name('cart.add');
             Route::post('/buy-now/{product}', [CartController::class, 'buyNow'])->name('cart.buyNow');
@@ -112,7 +112,7 @@ Route::middleware(['auth', EnsureVendorApproved::class, CheckMaintenanceMode::cl
             Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 
             Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders.index');
-            Route::get('/orders/{order}', [CustomerOrderController::class, 'show'])->name('orders.show');
+            Route::get('/orders/{orderCode}', [CustomerOrderController::class, 'show'])->name('orders.show');
             Route::get('/orders/{order}/pay', [CustomerOrderController::class, 'pay'])->name('orders.pay');
             Route::patch('/orders/{order}/cancel', [CustomerOrderController::class, 'cancel'])->name('orders.cancel');
 

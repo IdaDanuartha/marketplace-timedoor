@@ -1,7 +1,7 @@
 <?php $__env->startSection('title', 'My Orders'); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="max-w-6xl mx-auto py-8 space-y-6">
+<div class="max-w-6xl mx-auto py-8 space-y-6" x-data="{ isModalOpen: false, deleteUrl: '', title: '' }">
   <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">My Orders</h1>
 
   <?php if($orders->isEmpty()): ?>
@@ -36,10 +36,12 @@
                 <?php echo e($order->status->label()); ?>
 
                 </span>
-              <span class="px-2 py-1 text-xs rounded-full uppercase <?php echo e($order->payment_status === 'PAID' || $order->payment_status === 'paid' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'); ?>">
-                <?php echo e($order->payment_status); ?>
+              <?php if($order->payment_status !== 'CANCELED'): ?>
+                <span class="px-2 py-1 text-xs rounded-full uppercase <?php echo e($order->payment_status === 'PAID' || $order->payment_status === 'paid' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'); ?>">
+                  <?php echo e($order->payment_status); ?>
 
-              </span>
+                </span>
+              <?php endif; ?>
             </div>
           </div>
 
@@ -62,19 +64,15 @@
 
           
           <div class="flex justify-end gap-3 mt-4">
-            <a href="<?php echo e(route('shop.orders.show', $order)); ?>" 
+            <a href="<?php echo e(route('shop.orders.show', $order->code)); ?>" 
                class="text-sm px-4 py-2 rounded-lg border text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
               View Details
             </a>
 
             <?php if($order->status->value === 'PENDING'): ?>
-              <form action="<?php echo e(route('shop.orders.cancel', $order)); ?>" method="POST" onsubmit="return confirm('Cancel this order?')">
-                <?php echo csrf_field(); ?>
-                <?php echo method_field('PATCH'); ?>
-                <button type="submit" class="text-sm px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">
-                  Cancel
-                </button>
-              </form>
+              <button @click="isModalOpen = true; deleteUrl = '<?php echo e(route('shop.orders.cancel', $order)); ?>'; title = '<?php echo e($order->code); ?>';" class="text-sm px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">
+                Cancel
+              </button>
 
               <?php if($order->payment_status === 'UNPAID'): ?>
                 <a href="<?php echo e(route('shop.orders.pay', $order)); ?>" 
@@ -88,6 +86,27 @@
       <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     </div>
   <?php endif; ?>
+
+  <?php if (isset($component)) { $__componentOriginal1bb765878b9e0d6ed85f9c12a3781acf = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal1bb765878b9e0d6ed85f9c12a3781acf = $attributes; } ?>
+<?php $component = App\View\Components\Modal\CancelOrderModal::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('modal.cancel-order-modal'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\Modal\CancelOrderModal::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal1bb765878b9e0d6ed85f9c12a3781acf)): ?>
+<?php $attributes = $__attributesOriginal1bb765878b9e0d6ed85f9c12a3781acf; ?>
+<?php unset($__attributesOriginal1bb765878b9e0d6ed85f9c12a3781acf); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal1bb765878b9e0d6ed85f9c12a3781acf)): ?>
+<?php $component = $__componentOriginal1bb765878b9e0d6ed85f9c12a3781acf; ?>
+<?php unset($__componentOriginal1bb765878b9e0d6ed85f9c12a3781acf); ?>
+<?php endif; ?>
 </div>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /Users/gusde/Documents/laravel/marketplace-timedoor/resources/views/shop/orders/index.blade.php ENDPATH**/ ?>

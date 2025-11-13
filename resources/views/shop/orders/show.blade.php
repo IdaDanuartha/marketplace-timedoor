@@ -2,7 +2,7 @@
 @section('title', 'Order Details')
 
 @section('content')
-<div class="max-w-5xl mx-auto py-8 space-y-6">
+<div class="max-w-5xl mx-auto py-8 space-y-6" x-data="{ isModalOpen: false, deleteUrl: '', title: '' }">
   <div class="flex justify-between items-center">
     <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Order #{{ $order->code }}</h1>
     <a href="{{ route('shop.orders.index') }}" class="text-blue-600 text-sm hover:underline">← Back to Orders</a>
@@ -65,15 +65,13 @@
            class="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">
           Pay Now
         </a>
-        <form action="{{ route('shop.orders.cancel', $order) }}" method="POST" onsubmit="return confirm('Cancel this order?')">
-          @csrf
-          @method('PATCH')
-          <button type="submit" class="px-5 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium">
-            Cancel Order
-          </button>
-        </form>
+        <button @click="isModalOpen = true; deleteUrl = '{{ route('shop.orders.cancel', $order) }}'; title = '{{ $order->code }}';" class="px-5 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium">
+          Cancel Order
+        </button>
       @endif
     </div>
   </div>
+
+  <x-modal.cancel-order-modal />
 </div>
 @endsection

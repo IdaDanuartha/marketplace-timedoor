@@ -65,14 +65,14 @@ class OrderRepository implements OrderRepositoryInterface
     public function create(array $data): Order
     {
         return DB::transaction(function () use ($data) {
-            $data['code'] = $data['code'] ?? 'ORD-' . strtoupper(Str::random(8));
+            // $data['code'] = $data['code'] ?? 'ORD-' . strtoupper(Str::random(8));
             $data['payment_status'] = $data['payment_status'] ?? 'unpaid';
             $data['shipping_cost'] = $data['shipping_cost'] ?? 0;
             $data['grand_total'] = $data['total_price'] + $data['shipping_cost'];
 
             // Simpan order utama
             $order = Order::create(Arr::only($data, [
-                'code', 'customer_id', 'address_id',
+                'customer_id', 'address_id',
                 'total_price', 'shipping_cost', 'grand_total',
                 'status', 'payment_method', 'payment_status', 'midtrans_transaction_id'
             ]));

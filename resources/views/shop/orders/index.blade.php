@@ -2,7 +2,7 @@
 @section('title', 'My Orders')
 
 @section('content')
-<div class="max-w-6xl mx-auto py-8 space-y-6">
+<div class="max-w-6xl mx-auto py-8 space-y-6" x-data="{ isModalOpen: false, deleteUrl: '', title: '' }">
   <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">My Orders</h1>
 
   @if($orders->isEmpty())
@@ -35,9 +35,11 @@
                 <span class="px-2 py-1 rounded-full text-xs font-medium text-nowrap {{ $color }}">
                 {{ $order->status->label() }}
                 </span>
-              <span class="px-2 py-1 text-xs rounded-full uppercase {{ $order->payment_status === 'PAID' || $order->payment_status === 'paid' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' }}">
-                {{ $order->payment_status }}
-              </span>
+              @if ($order->payment_status !== 'CANCELED')
+                <span class="px-2 py-1 text-xs rounded-full uppercase {{ $order->payment_status === 'PAID' || $order->payment_status === 'paid' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' }}">
+                  {{ $order->payment_status }}
+                </span>
+              @endif
             </div>
           </div>
 
@@ -60,19 +62,15 @@
 
           {{-- Actions --}}
           <div class="flex justify-end gap-3 mt-4">
-            <a href="{{ route('shop.orders.show', $order) }}" 
+            <a href="{{ route('shop.orders.show', $order->code) }}" 
                class="text-sm px-4 py-2 rounded-lg border text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
               View Details
             </a>
 
             @if($order->status->value === 'PENDING')
-              <form action="{{ route('shop.orders.cancel', $order) }}" method="POST" onsubmit="return confirm('Cancel this order?')">
-                @csrf
-                @method('PATCH')
-                <button type="submit" class="text-sm px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">
-                  Cancel
-                </button>
-              </form>
+              <button @click="isModalOpen = true; deleteUrl = '{{ route('shop.orders.cancel', $order) }}'; title = '{{ $order->code }}';" class="text-sm px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">
+                Cancel
+              </button>
 
               @if($order->payment_status === 'UNPAID')
                 <a href="{{ route('shop.orders.pay', $order) }}" 
@@ -86,5 +84,7 @@
       @endforeach
     </div>
   @endif
+
+  <x-modal.cancel-order-modal />
 </div>
 @endsection

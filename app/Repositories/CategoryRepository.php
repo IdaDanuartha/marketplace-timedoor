@@ -45,7 +45,6 @@ class CategoryRepository implements CategoryRepositoryInterface
     {
         try {
             return DB::transaction(function () use ($data) {
-                $data['slug'] = Str::slug($data['name']);
                 return Category::create($data);
             });
         } catch (Throwable $e) {
@@ -58,7 +57,6 @@ class CategoryRepository implements CategoryRepositoryInterface
     {
         try {
             return DB::transaction(function () use ($category, $data) {
-                $data['slug'] = Str::slug($data['name']);
                 $category->update($data);
                 return $category;
             });

@@ -55,9 +55,9 @@ class ShopController extends Controller
         ]);
     }
 
-    public function show(Product $product)
+    public function show($productSlug)
     {
-        $product->load('category', 'vendor');
+        $product = Product::where('slug', $productSlug)->firstOrFail()->load(['category', 'vendor']);
         return view('shop.products.show', compact('product'));
     }
 }

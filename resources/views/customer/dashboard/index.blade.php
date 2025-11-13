@@ -4,64 +4,6 @@
 
 @section('content')
 <div class="space-y-8" x-data="{ isModalOpen: false, deleteUrl: '', title: '' }">
-
-  <!-- Cancel Modal -->
-  <div
-    x-show="isModalOpen"
-    x-cloak
-    class="fixed inset-0 flex items-center justify-center p-5 z-[99999]"
-  >
-    <!-- Backdrop -->
-    <div @click="isModalOpen = false" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm"></div>
-
-    <!-- Modal -->
-    <div
-      @click.outside="isModalOpen = false"
-      class="relative w-full max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-lg p-6"
-    >
-      <!-- Header -->
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">
-          Cancel <span x-text="title" class="capitalize"></span>
-        </h2>
-        <button 
-          @click="isModalOpen = false"
-          class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-        >
-          ✕
-        </button>
-      </div>
-
-      <!-- Body -->
-      <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">
-        Are you sure you want to cancel 
-        <b class="text-gray-800 dark:text-gray-200 lowercase" x-text="title"></b>?<br>
-        This action cannot be undone.
-      </p>
-
-      <!-- Actions -->
-      <div class="flex justify-end gap-3">
-        <button 
-          @click="isModalOpen = false"
-          class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition"
-        >
-          Back
-        </button>
-
-        <form :action="deleteUrl" method="POST">
-          @csrf
-          @method('PATCH')
-          <button 
-            type="submit"
-            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-sm rounded-lg text-white transition"
-          >
-            Confirm Cancel
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-
   <!-- METRICS -->
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
     @foreach ($metrics as $key => $metric)
@@ -138,7 +80,7 @@
                   {{ $order->created_at->format('d M Y') }}
                 </td>
                 <td class="py-2 px-3 text-right flex justify-end gap-2">
-                  <a href="{{ route('shop.orders.show', $order) }}"
+                  <a href="{{ route('shop.orders.show', $order->code) }}"
                      class="text-xs px-3 py-1.5 rounded-lg border text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
                     View
                   </a>
@@ -167,48 +109,6 @@
     @endif
   </div>
 
-  <!-- ORDER LOG ACTIVITY -->
-  {{-- <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
-    <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Order Activity Log</h2>
-    @if ($orderLogs->isEmpty())
-      <p class="text-gray-500 text-sm">No recent activities.</p>
-    @else
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-sm text-left border-separate border-spacing-y-2">
-          <thead class="text-gray-600 dark:text-gray-400 uppercase text-xs">
-            <tr>
-              <th class="py-2 px-3">Order</th>
-              <th class="py-2 px-3">Product</th>
-              <th class="py-2 px-3">Qty</th>
-              <th class="py-2 px-3">Status</th>
-              <th class="py-2 px-3">Updated</th>
-            </tr>
-          </thead>
-          <tbody>
-            @foreach ($orderLogs as $log)
-              <tr class="bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-                <td class="py-2 px-3 font-medium text-gray-800 dark:text-white">{{ $log['order_code'] }}</td>
-                <td class="py-2 px-3 text-gray-600 dark:text-gray-300">{{ $log['product'] }}</td>
-                <td class="py-2 px-3 text-gray-600 dark:text-gray-300">{{ $log['qty'] }}</td>
-                <td class="py-2 px-3">
-                  <span class="px-2 py-1 rounded-full text-xs font-medium
-                    @class([
-                      'bg-yellow-100 text-yellow-700' => $log['status'] === 'PENDING',
-                      'bg-blue-100 text-blue-700' => $log['status'] === 'PROCESSING',
-                      'bg-purple-100 text-purple-700' => $log['status'] === 'SHIPPED',
-                      'bg-green-100 text-green-700' => $log['status'] === 'DELIVERED',
-                      'bg-red-100 text-red-700' => $log['status'] === 'CANCELED',
-                    ])">
-                    {{ $log['status'] ?? '-' }}
-                  </span>
-                </td>
-                <td class="py-2 px-3 text-gray-600 dark:text-gray-300">{{ $log['updated_at'] }}</td>
-              </tr>
-            @endforeach
-          </tbody>
-        </table>
-      </div>
-    @endif
-  </div> --}}
+  <x-modal.cancel-order-modal />
 </div>
 @endsection

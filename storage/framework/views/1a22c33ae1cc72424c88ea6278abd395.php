@@ -1,7 +1,7 @@
 <?php $__env->startSection('title', 'Order Details'); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="max-w-5xl mx-auto py-8 space-y-6">
+<div class="max-w-5xl mx-auto py-8 space-y-6" x-data="{ isModalOpen: false, deleteUrl: '', title: '' }">
   <div class="flex justify-between items-center">
     <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Order #<?php echo e($order->code); ?></h1>
     <a href="<?php echo e(route('shop.orders.index')); ?>" class="text-blue-600 text-sm hover:underline">← Back to Orders</a>
@@ -64,16 +64,33 @@
            class="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">
           Pay Now
         </a>
-        <form action="<?php echo e(route('shop.orders.cancel', $order)); ?>" method="POST" onsubmit="return confirm('Cancel this order?')">
-          <?php echo csrf_field(); ?>
-          <?php echo method_field('PATCH'); ?>
-          <button type="submit" class="px-5 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium">
-            Cancel Order
-          </button>
-        </form>
+        <button @click="isModalOpen = true; deleteUrl = '<?php echo e(route('shop.orders.cancel', $order)); ?>'; title = '<?php echo e($order->code); ?>';" class="px-5 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium">
+          Cancel Order
+        </button>
       <?php endif; ?>
     </div>
   </div>
+
+  <?php if (isset($component)) { $__componentOriginal1bb765878b9e0d6ed85f9c12a3781acf = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal1bb765878b9e0d6ed85f9c12a3781acf = $attributes; } ?>
+<?php $component = App\View\Components\Modal\CancelOrderModal::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('modal.cancel-order-modal'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\Modal\CancelOrderModal::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal1bb765878b9e0d6ed85f9c12a3781acf)): ?>
+<?php $attributes = $__attributesOriginal1bb765878b9e0d6ed85f9c12a3781acf; ?>
+<?php unset($__attributesOriginal1bb765878b9e0d6ed85f9c12a3781acf); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal1bb765878b9e0d6ed85f9c12a3781acf)): ?>
+<?php $component = $__componentOriginal1bb765878b9e0d6ed85f9c12a3781acf; ?>
+<?php unset($__componentOriginal1bb765878b9e0d6ed85f9c12a3781acf); ?>
+<?php endif; ?>
 </div>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /Users/gusde/Documents/laravel/marketplace-timedoor/resources/views/shop/orders/show.blade.php ENDPATH**/ ?>
