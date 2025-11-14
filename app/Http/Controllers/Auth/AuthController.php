@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Interfaces\AuthRepositoryInterface;
+use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Throwable;
@@ -24,7 +26,6 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        // throttle via middleware 'throttle:login'
         try {
             $ok = $this->authRepo->attemptLogin(
                 $request->credentials(),
@@ -39,8 +40,8 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
-            // optionally force email verification
-            if (! auth()->user()->hasVerifiedEmail()) {
+            $user = User::find(Auth::id());
+            if (!$user->hasVerifiedEmail()) {
                 return redirect()->route('verification.notice');
             }
 

@@ -63,7 +63,7 @@ class AuthRepository implements AuthRepositoryInterface
         }
     }
 
-    public function handleGoogleCallback(): array|false
+    public function handleGoogleCallback(): mixed
     {
         try {
             $googleUser = Socialite::driver('google')->user();
