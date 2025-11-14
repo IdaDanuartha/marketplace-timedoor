@@ -37,6 +37,22 @@
       
       <div class="flex items-start justify-between">
         <div>
+          
+          <?php if($product->vendor && $product->vendor->is_approved): ?>
+            <a href="<?php echo e(route('shop.products.index', ['vendor' => $product->vendor->id])); ?>" class="flex items-center gap-1 mb-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600"
+                  viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2l2.39 1.19 2.61-.39 1.39 2.4 2.39 1.2-.39 2.6 1.19 2.4-1.19 2.39.39 2.61-2.39 1.39-1.2 2.39-2.6-.39-2.4 1.19-2.39-1.19-2.61.39-1.39-2.39-2.39-1.2.39-2.6L2 12l1.19-2.39-.39-2.61 2.39-1.39L6.8 3.81l2.6.39L12 2zm-1 14l6-6-1.4-1.4L11 13.2 8.4 10.6 7 12l4 4z"/>
+              </svg>
+
+              <span class="text-sm font-semibold text-blue-700">
+                  <?php echo e($product->vendor->name); ?>
+
+              </span>
+            </a>
+          <?php else: ?>
+            <a href="<?php echo e(route('shop.products.index', ['vendor' => $product->vendor->id])); ?>" class="text-sm text-gray-500 mb-1"><?php echo e($product->vendor->name ?? '-'); ?></a>
+          <?php endif; ?>
           <h1 class="text-2xl font-bold text-gray-800 dark:text-white"><?php echo e($product->name); ?></h1>
           <div class="flex gap-3">
             <p class="text-gray-500 dark:text-gray-400 mt-1"><?php echo e($product->category->name ?? 'Uncategorized'); ?></p>

@@ -133,6 +133,24 @@
         <a href="<?php echo e(route('shop.products.show', $product->slug)); ?>">
           <img src="<?php echo e(profile_image($product->image_path)); ?>" alt="<?php echo e($product->name); ?>"
             class="w-full h-48 object-cover rounded mb-3">
+
+          
+          <?php if($product->vendor && $product->vendor->is_approved): ?>
+            <div class="flex items-center gap-1 mb-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-600"
+                  viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2l2.39 1.19 2.61-.39 1.39 2.4 2.39 1.2-.39 2.6 1.19 2.4-1.19 2.39.39 2.61-2.39 1.39-1.2 2.39-2.6-.39-2.4 1.19-2.39-1.19-2.61.39-1.39-2.39-2.39-1.2.39-2.6L2 12l1.19-2.39-.39-2.61 2.39-1.39L6.8 3.81l2.6.39L12 2zm-1 14l6-6-1.4-1.4L11 13.2 8.4 10.6 7 12l4 4z"/>
+              </svg>
+
+              <span class="text-xs font-semibold text-blue-700">
+                  <?php echo e($product->vendor->name); ?>
+
+              </span>
+            </div>
+          <?php else: ?>
+            <p class="text-xs text-gray-500 mb-1"><?php echo e($product->vendor->name ?? '-'); ?></p>
+          <?php endif; ?>
+
           <h2 class="font-semibold text-gray-800 dark:text-white truncate"><?php echo e($product->name); ?></h2>
           <p class="text-sm text-gray-500"><?php echo e($product->category->name ?? 'Uncategorized'); ?></p>
           <p class="text-blue-600 font-semibold mt-2">Rp <?php echo e(number_format($product->price, 0, ',', '.')); ?></p>
