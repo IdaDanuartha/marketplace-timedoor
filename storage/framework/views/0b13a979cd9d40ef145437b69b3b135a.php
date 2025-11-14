@@ -4,7 +4,6 @@
 <div class="max-w-6xl mx-auto space-y-8">
   <div class="flex items-center justify-between">
     <h1 class="text-xl font-semibold text-gray-800 dark:text-white">Website Settings</h1>
-    <a href="<?php echo e(url()->previous()); ?>" class="text-sm text-blue-600 hover:underline">← Back</a>
   </div>
 
   <?php if(session('success')): ?>
@@ -42,7 +41,7 @@
 
                         class="sr-only peer">
                     <div class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700
-                                peer-checked:bg-blue-600 transition-colors duration-200"></div>
+                                peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600 transition-colors duration-200"></div>
                     <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white border rounded-full
                                 transition-transform duration-200 peer-checked:translate-x-full peer-checked:border-blue-600"></div>
                     </label>

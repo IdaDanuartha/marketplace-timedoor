@@ -3,7 +3,17 @@
 @section('title', 'Edit Profile')
 
 @section('content')
-<div class="max-w-3xl mx-auto space-y-8">
+
+<div class="max-w-5xl mx-auto space-y-8">
+  {{-- Breadcrumb --}}
+  <nav class="text-sm text-gray-500">
+    <ol class="flex items-center space-x-2">
+      <li><a href="{{ route('dashboard.index') }}" class="hover:underline">Dashboard</a></li>
+      <li>/</li>
+      <li class="text-gray-700 dark:text-gray-300">Edit Profile</li>
+    </ol>
+  </nav>
+
   <div class="flex gap-3 mb-4 items-center">
     <h1 class="text-xl font-semibold text-gray-800 dark:text-white">Edit Profile</h1>
     @if (auth()->user()->vendor)
@@ -137,9 +147,7 @@
     </div>
   </form>
 
-  {{-- =========================
-        DELETE ACCOUNT MODAL
-  ========================== --}}
+  {{-- DELETE ACCOUNT MODAL --}}
   <div x-data="{ open: false }" class="pt-10 border-t border-gray-200 dark:border-gray-800">
     <h2 class="text-lg font-semibold text-red-600 dark:text-red-400 mb-3">Danger Zone</h2>
     <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">

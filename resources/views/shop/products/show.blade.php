@@ -3,20 +3,28 @@
 @section('title', $product->name)
 
 @section('content')
+  <nav class="text-sm text-gray-500">
+    <ol class="flex items-center space-x-2">
+      <li><a href="{{ route('dashboard.index') }}" class="hover:underline">Dashboard</a></li>
+      <li>/</li>
+      <li><a href="{{ route('shop.products.index') }}" class="hover:underline">Products</a></li>
+      <li>/</li>
+      <li class="text-gray-700 dark:text-gray-300">Detail</li>
+    </ol>
+  </nav>
+
   {{-- Alerts --}}
   @if(session('success'))
-    <div class="p-3 bg-green-100 border border-green-300 text-green-800 rounded-lg mb-4">
+    <div class="p-3 bg-green-100 border border-green-300 text-green-800 rounded-lg mt-4">
       {{ session('success') }}
     </div>
-  @endif
-
-  @if($errors->any())
-    <div class="p-3 bg-red-100 border border-red-300 text-red-800 rounded-lg mb-4">
+  @elseif($errors->any())
+    <div class="p-3 bg-red-100 border border-red-300 text-red-800 rounded-lg mt-4">
       {{ $errors->first() }}
     </div>
   @endif
 
-  <div class="max-w-5xl mx-auto py-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+  <div class="max-w-6xl mx-auto py-8 grid grid-cols-1 md:grid-cols-2 gap-8">
     {{-- Product Image --}}
     <div>
       <img src="{{ profile_image($product->image_path) }}"

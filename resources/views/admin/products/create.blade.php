@@ -8,6 +8,16 @@
   $isVendor = $user->vendor ? true : false;
 @endphp
 
+<nav class="mb-6 text-sm text-gray-500">
+  <ol class="flex items-center space-x-2">
+    <li><a href="{{ route('dashboard.index') }}" class="hover:underline">Dashboard</a></li>
+    <li>/</li>
+    <li><a href="{{ route('products.index') }}" class="hover:underline">Products</a></li>
+    <li>/</li>
+    <li class="text-gray-700 dark:text-gray-300">Create</li>
+  </ol>
+</nav>
+
 <div class="grid grid-cols-12 gap-4 md:gap-6">
   <div class="col-span-12">
     {{-- Flash & Errors --}}

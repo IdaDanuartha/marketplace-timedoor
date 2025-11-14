@@ -3,147 +3,131 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Cart, CartItem, Product};
+use App\Http\Requests\Cart\UpdateCartController;
+use App\Interfaces\CartRepositoryInterface;
+use App\Models\{Product, CartItem};
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class CartController extends Controller
 {
+    public function __construct(private readonly CartRepositoryInterface $cartRepo) {}
+
     public function index()
     {
-        $customer = Auth::user()->customer;
+        try {
+            $customer = Auth::user()->customer;
+            $cart = $this->cartRepo->getCart($customer->id);
 
-        $cart = Cart::with('items.product')->firstOrCreate(
-            ['customer_id' => $customer->id],
-            ['total_price' => 0]
-        );
+            $total = $cart->items->sum('subtotal');
 
-        $total = $cart->items->sum('subtotal');
+            return view('shop.cart.index', compact('cart', 'total'));
 
-        return view('shop.cart.index', compact('cart', 'total'));
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withErrors('Failed to load your cart.');
+        }
     }
 
     public function store(Product $product)
     {
-        if ($product->stock < 1) {
-            return back()->withErrors('Product is out of stock.');
-        }
+        try {
+            $customer = Auth::user()->customer;
 
-        $customer = Auth::user()->customer;
+            $result = $this->cartRepo->addToCart($customer->id, $product);
 
-        $cart = Cart::firstOrCreate(
-            ['customer_id' => $customer->id],
-            ['total_price' => 0]
-        );
-
-        $item = $cart->items()->where('product_id', $product->id)->first();
-
-        if ($item) {
-
-            if ($item->qty + 1 > $product->stock) {
-                return back()->withErrors('Not enough stock available.');
+            if ($result !== true) {
+                return back()->withErrors($result);
             }
 
-            $item->qty++;
-            $item->subtotal = $item->qty * $product->price;
-            $item->save();
+            return back()->with('success', 'Product added to cart.');
 
-        } else {
-            if ($product->stock < 1) {
-                return back()->withErrors('Product is out of stock.');
-            }
-
-            $cart->items()->create([
-                'product_id' => $product->id,
-                'qty' => 1,
-                'subtotal' => $product->price,
-            ]);
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withErrors('Failed to add product to cart.');
         }
-
-        $cart->update(['total_price' => $cart->items()->sum('subtotal')]);
-
-        return back()->with('success', 'Product added to cart.');
     }
 
-    public function update(Request $request, CartItem $item)
+    public function update(UpdateCartController $request, CartItem $item)
     {
-        $request->validate([
-            'qty' => 'required|integer|min:1',
-        ]);
+        try {
+            $result = $this->cartRepo->updateItem($item, $request->qty);
 
-        if ($request->qty > $item->product->stock) {
-            return back()->withErrors('Not enough stock available.');
+            if ($result !== true) {
+                return back()->withErrors($result);
+            }
+
+            return back()->with('success', 'Cart updated.');
+
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withErrors('Failed to update cart.');
         }
-
-        $item->update([
-            'qty' => $request->qty,
-            'subtotal' => $item->product->price * $request->qty,
-        ]);
-
-        $item->cart->update(['total_price' => $item->cart->items()->sum('subtotal')]);
-
-        return back()->with('success', 'Cart updated.');
     }
 
     public function destroy(CartItem $item)
     {
-        $cart = $item->cart;
-        $item->delete();
-        $cart->update(['total_price' => $cart->items()->sum('subtotal')]);
+        try {
+            $this->cartRepo->removeItem($item);
+            return back()->with('success', 'Item removed from cart.');
 
-        return back()->with('success', 'Item removed from cart.');
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withErrors('Failed to remove item from cart.');
+        }
     }
 
     public function clear()
     {
-        $customer = Auth::user()->customer;
-        $cart = Cart::where('customer_id', $customer->id)->first();
+        try {
+            $customer = Auth::user()->customer;
+            $this->cartRepo->clearCart($customer->id);
 
-        if ($cart) {
-            $cart->items()->delete();
-            $cart->update(['total_price' => 0]);
+            return back()->with('success', 'Cart cleared.');
+
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withErrors('Failed to clear cart.');
         }
-
-        return back()->with('success', 'Cart cleared.');
     }
 
     public function checkout()
     {
-        $customer = Auth::user()->customer;
-        $cart = Cart::with('items.product')->where('customer_id', $customer->id)->first();
+        try {
+            $customer = Auth::user()->customer;
+            $cart = $this->cartRepo->getCart($customer->id);
 
-        if (!$cart || $cart->items->isEmpty()) {
-            return redirect()->route('shop.cart.index')->withErrors('Your cart is empty.');
+            if ($cart->items->isEmpty()) {
+                return redirect()->route('shop.cart.index')
+                    ->withErrors('Your cart is empty.');
+            }
+
+            return redirect()->route('shop.checkout.index');
+
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withErrors('Error preparing checkout.');
         }
-
-        return redirect()->route('shop.checkout.index');
     }
 
     public function buyNow(Product $product)
     {
-        if ($product->stock < 1) {
-            return back()->withErrors('Product is out of stock.');
+        try {
+            $customer = Auth::user()->customer;
+
+            $result = $this->cartRepo->buyNow($customer->id, $product);
+
+            if ($result !== true) {
+                return back()->withErrors($result);
+            }
+
+            return redirect()->route('shop.checkout.index')
+                ->with('success', 'Proceed to checkout.');
+
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withErrors('Failed to process Buy Now.');
         }
-
-        $customer = Auth::user()->customer;
-
-        $cart = Cart::firstOrCreate(
-            ['customer_id' => $customer->id],
-            ['total_price' => 0]
-        );
-
-        $cart->items()->delete();
-
-        $cart->items()->create([
-            'product_id' => $product->id,
-            'qty' => 1,
-            'subtotal' => $product->price,
-        ]);
-
-        $cart->update(['total_price' => $product->price]);
-
-        return redirect()->route('shop.checkout.index')->with('success', 'Proceed to checkout.');
     }
-
 }

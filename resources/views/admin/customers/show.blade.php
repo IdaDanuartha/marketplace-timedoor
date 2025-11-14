@@ -3,6 +3,16 @@
 @section('title', $customer->name)
 
 @section('content')
+<nav class="mb-6 text-sm text-gray-500">
+  <ol class="flex items-center space-x-2">
+    <li><a href="{{ route('dashboard.index') }}" class="hover:underline">Dashboard</a></li>
+    <li>/</li>
+    <li><a href="{{ route('customers.index') }}" class="hover:underline">Customers</a></li>
+    <li>/</li>
+    <li class="text-gray-700 dark:text-gray-300">Detail</li>
+  </ol>
+</nav>
+
 <div class="max-w-4xl mx-auto space-y-6" x-data="{ isModalOpen: false, title: '', deleteUrl: '' }" x-cloak>
 
   {{-- CUSTOMER PROFILE --}}

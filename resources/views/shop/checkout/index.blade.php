@@ -2,7 +2,17 @@
 @section('title', 'Checkout')
 
 @section('content')
-<div class="max-w-5xl mx-auto py-8 space-y-8">
+<nav class="text-sm text-gray-500">
+  <ol class="flex items-center space-x-2">
+    <li><a href="{{ route('dashboard.index') }}" class="hover:underline">Dashboard</a></li>
+    <li>/</li>
+    <li><a href="{{ route('shop.cart.index') }}" class="hover:underline">Carts</a></li>
+    <li>/</li>
+    <li class="text-gray-700 dark:text-gray-300">Checkout</li>
+  </ol>
+</nav>
+
+<div class="max-w-6xl mx-auto py-8 space-y-8">
   <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Checkout</h1>
 
   <form x-data="checkoutData({{ $subtotal }}, {{ $shippingCost }})" action="{{ route('shop.checkout.process') }}" method="POST">

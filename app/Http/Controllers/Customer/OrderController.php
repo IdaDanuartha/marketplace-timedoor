@@ -3,77 +3,85 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Interfaces\OrderRepositoryInterface;
 use App\Models\Order;
 use App\Enum\OrderStatus;
 use Illuminate\Support\Facades\Auth;
-use Midtrans\Snap;
+use Throwable;
 
 class OrderController extends Controller
 {
+    public function __construct(private readonly OrderRepositoryInterface $orderRepo) {}
+
     public function index()
     {
-        $customer = Auth::user()->customer;
-        $orders = Order::with(['items.product'])
-            ->where('customer_id', $customer->id)
-            ->latest()
-            ->paginate(10);
+        try {
+            $customer = Auth::user()->customer;
+            $orders = $this->orderRepo->getCustomerOrders($customer->id);
 
-        return view('shop.orders.index', compact('orders'));
+            return view('shop.orders.index', compact('orders'));
+
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withErrors('Failed to load orders.');
+        }
     }
 
     public function show($orderCode)
     {
-        // $this->authorize('view', $order);
-        $customer = Auth::user()->customer;
-        $order = Order::where('code', $orderCode)
-            ->where('customer_id', $customer->id)
-            ->firstOrFail()
-            ->load(['items.product']);
-        return view('shop.orders.show', compact('order'));
+        try {
+            $customer = Auth::user()->customer;
+
+            $order = $this->orderRepo->findByCodeForCustomer($orderCode, $customer->id);
+
+            if (!$order) {
+                return back()->withErrors('Order not found.');
+            }
+
+            return view('shop.orders.show', compact('order'));
+
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withErrors('Failed to load order details.');
+        }
     }
 
     public function pay(Order $order)
     {
-        // $this->authorize('update', $order);
+        try {
+            if ($order->payment_status === 'PAID') {
+                return redirect()->route('shop.orders.show', $order)
+                    ->withErrors('This order has already been paid.');
+            }
 
-        if ($order->payment_status === 'PAID') {
-            return redirect()->route('shop.orders.show', $order)->withErrors('This order has already been paid.');
+            $snapToken = $this->orderRepo->generatePayment($order);
+
+            if (!$snapToken) {
+                return back()->withErrors('Failed to generate payment token.');
+            }
+
+            return view('shop.checkout.payment', compact('order', 'snapToken'));
+
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withErrors('Payment process failed.');
         }
-
-        $midtransOrderId = $order->generatePaymentId();
-
-        $payload = [
-            'transaction_details' => [
-                'order_id' => $midtransOrderId,
-                'gross_amount' => $order->grand_total,
-            ],
-            'customer_details' => [
-                'first_name' => $order->customer->name,
-                'email' => $order->customer->user->email,
-                'phone' => $order->customer->phone,
-            ],
-            'enabled_payments' => ['gopay', 'bank_transfer', 'qris', 'shopeepay'],
-        ];
-
-        $snapToken = Snap::getSnapToken($payload);
-        $order->update(['midtrans_transaction_id' => $snapToken]);
-
-        return view('shop.checkout.payment', compact('order', 'snapToken'));
     }
 
     public function cancel(Order $order)
     {
-        // $this->authorize('update', $order);
+        try {
+            if ($order->status !== OrderStatus::PENDING) {
+                return back()->withErrors('Only pending orders can be canceled.');
+            }
 
-        if ($order->status !== OrderStatus::PENDING) {
-            return back()->withErrors('Only pending orders can be canceled.');
+            $this->orderRepo->cancelOrder($order);
+
+            return back()->with('success', 'Order has been canceled.');
+
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withErrors('Failed to cancel order.');
         }
-
-        $order->update([
-            'status' => OrderStatus::CANCELED,
-            'payment_status' => 'CANCELED',
-        ]);
-
-        return back()->with('success', 'Order has been canceled.');
     }
 }

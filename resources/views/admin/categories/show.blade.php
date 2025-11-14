@@ -3,6 +3,16 @@
 @section('title', 'Category Details')
 
 @section('content')
+<nav class="mb-6 text-sm text-gray-500">
+  <ol class="flex items-center space-x-2">
+    <li><a href="{{ route('dashboard.index') }}" class="hover:underline">Dashboard</a></li>
+    <li>/</li>
+    <li><a href="{{ route('categories.index') }}" class="hover:underline">Categories</a></li>
+    <li>/</li>
+    <li class="text-gray-700 dark:text-gray-300">Detail</li>
+  </ol>
+</nav>
+
 <div 
   x-data="{ isModalOpen: false, title: '', deleteUrl: '' }"
   x-cloak

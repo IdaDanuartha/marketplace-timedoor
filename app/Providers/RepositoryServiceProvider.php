@@ -5,21 +5,27 @@ namespace App\Providers;
 use App\Interfaces\AddressRepositoryInterface;
 use App\Repositories\AuthRepository;
 use App\Interfaces\AuthRepositoryInterface;
+use App\Interfaces\CartRepositoryInterface;
 use App\Repositories\CategoryRepository;
 use App\Interfaces\CategoryRepositoryInterface;
 use App\Interfaces\CustomerRepositoryInterface;
 use App\Interfaces\OrderRepositoryInterface;
 use App\Interfaces\ProductRepositoryInterface;
 use App\Interfaces\ProfileRepositoryInterface;
+use App\Interfaces\ReviewRepositoryInterface;
 use App\Interfaces\VendorRepositoryInterface;
 use App\Interfaces\WebSettingRepositoryInterface;
+use App\Interfaces\WishlistRepositoryInterface;
 use App\Repositories\AddressRepository;
+use App\Repositories\CartRepository;
 use App\Repositories\CustomerRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProfileRepository;
+use App\Repositories\ReviewRepository;
 use App\Repositories\VendorRepository;
 use App\Repositories\WebSettingRepository;
+use App\Repositories\WishlistRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -29,6 +35,7 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
         $this->app->bind(CategoryRepositoryInterface::class, CategoryRepository::class);
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
         $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
@@ -37,7 +44,9 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(WebSettingRepositoryInterface::class, WebSettingRepository::class);
         $this->app->bind(ProfileRepositoryInterface::class, ProfileRepository::class);
         $this->app->bind(AddressRepositoryInterface::class, AddressRepository::class);
-        $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
+        $this->app->bind(CartRepositoryInterface::class, CartRepository::class);
+        $this->app->bind(ReviewRepositoryInterface::class, ReviewRepository::class);
+        $this->app->bind(WishlistRepositoryInterface::class, WishlistRepository::class);
     }
 
     /**

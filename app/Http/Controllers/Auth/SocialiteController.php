@@ -1,12 +1,12 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Interfaces\AuthRepositoryInterface;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Socialite;
 use Throwable;
 
 class SocialiteController extends Controller
@@ -21,37 +21,33 @@ class SocialiteController extends Controller
     public function callback()
     {
         try {
-            $googleUser = Socialite::driver('google')->user();
+            $result = $this->authRepo->handleGoogleCallback();
 
-            // cari apakah user sudah pernah terdaftar
-            $user = User::where('email', $googleUser->getEmail())->first();
-
-            if ($user) {
-                Auth::login($user, true);
-                if (! $user->hasVerifiedEmail()) {
-                    $user->markEmailAsVerified();
-                }
-                return redirect()->intended(route('dashboard.index'))
-                    ->with('status', 'Welcome back, '.$user->username.'!');
+            if ($result === false) {
+                return redirect()->route('login')
+                    ->withErrors(['login' => 'Failed to authenticate with Google.']);
             }
 
-            // simpan data sementara di session
-            session([
-                'google_user' => [
-                    'name' => $googleUser->getName(),
-                    'email' => $googleUser->getEmail(),
-                    'avatar' => $googleUser->getAvatar(),
-                    'google_id' => $googleUser->getId(),
-                ],
-            ]);
+            // jika sudah ada user
+            if ($result instanceof \App\Models\User) {
+                Auth::login($result, true);
 
-            // arahkan ke halaman pilih role
+                if (! $result->hasVerifiedEmail()) {
+                    $result->markEmailAsVerified();
+                }
+
+                return redirect()->intended(route('dashboard.index'))
+                    ->with('status', 'Welcome back, '.$result->username.'!');
+            }
+
+            // jika belum ada user → simpan ke session dan arahkan ke choose role
+            $this->authRepo->prepareGoogleSession($result);
             return redirect()->route('google.chooseRole');
 
         } catch (Throwable $e) {
             Log::error('Google OAuth error: '.$e->getMessage());
             return redirect()->route('login')
-                ->withErrors(['login' => 'Failed to authenticate with Google. Please try again.']);
+                ->withErrors(['login' => 'Google authentication failed.']);
         }
     }
 
@@ -59,7 +55,8 @@ class SocialiteController extends Controller
     {
         $googleUser = session('google_user');
         if (! $googleUser) {
-            return redirect()->route('login')->withErrors(['login' => 'Session expired, please sign in again.']);
+            return redirect()->route('login')
+                ->withErrors(['login' => 'Session expired, please sign in again.']);
         }
 
         return view('auth.choose-role', compact('googleUser'));
@@ -69,7 +66,8 @@ class SocialiteController extends Controller
     {
         $googleUser = session('google_user');
         if (! $googleUser) {
-            return redirect()->route('login')->withErrors(['login' => 'Session expired, please sign in again.']);
+            return redirect()->route('login')
+                ->withErrors(['login' => 'Session expired, please sign in again.']);
         }
 
         request()->validate([
@@ -78,13 +76,17 @@ class SocialiteController extends Controller
 
         try {
             $user = $this->authRepo->registerGoogleUser($googleUser, request('role'));
+
             Auth::login($user, true);
             session()->forget('google_user');
 
-            return redirect()->route('dashboard.index')->with('status', 'Account created successfully!');
+            return redirect()->route('dashboard.index')
+                ->with('status', 'Account created successfully!');
+
         } catch (Throwable $e) {
             Log::error('Google register error: '.$e->getMessage());
-            return redirect()->route('login')->withErrors(['register' => 'Failed to complete registration.']);
+            return redirect()->route('login')
+                ->withErrors(['register' => 'Failed to complete registration.']);
         }
     }
 }

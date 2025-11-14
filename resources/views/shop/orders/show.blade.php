@@ -2,6 +2,15 @@
 @section('title', 'Order Details')
 
 @section('content')
+<nav class="text-sm text-gray-500">
+  <ol class="flex items-center space-x-2">
+    <li><a href="{{ route('dashboard.index') }}" class="hover:underline">Dashboard</a></li>
+    <li>/</li>
+    <li><a href="{{ route('shop.orders.index') }}" class="hover:underline">Orders</a></li>
+    <li>/</li>
+    <li class="text-gray-700 dark:text-gray-300">Detail</li>
+  </ol>
+</nav>
 
 {{-- Alerts --}}
 @if (session('success'))
@@ -15,7 +24,7 @@
   </div>
 @endif
 
-<div class="max-w-5xl mx-auto py-8 space-y-6" x-data="{ isModalOpen: false, deleteUrl: '', title: '' }">
+<div class="max-w-6xl mx-auto py-8 space-y-6" x-data="{ isModalOpen: false, deleteUrl: '', title: '' }">
 
   {{-- Header --}}
   <div class="flex justify-between items-center">

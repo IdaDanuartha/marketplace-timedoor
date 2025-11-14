@@ -1,6 +1,15 @@
 <?php $__env->startSection('title', 'Shop Products'); ?>
 
 <?php $__env->startSection('content'); ?>
+
+<nav class="text-sm text-gray-500">
+  <ol class="flex items-center space-x-2">
+    <li><a href="<?php echo e(route('dashboard.index')); ?>" class="hover:underline">Dashboard</a></li>
+    <li>/</li>
+    <li class="text-gray-700 dark:text-gray-300">Products</li>
+  </ol>
+</nav>
+  
 <div class="max-w-6xl mx-auto py-8">
   <h1 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Shop Products</h1>
 

@@ -3,6 +3,16 @@
 @section('title', 'Vendor Details')
 
 @section('content')
+<nav class="mb-6 text-sm text-gray-500">
+  <ol class="flex items-center space-x-2">
+    <li><a href="{{ route('dashboard.index') }}" class="hover:underline">Dashboard</a></li>
+    <li>/</li>
+    <li><a href="{{ route('vendors.index') }}" class="hover:underline">Vendors</a></li>
+    <li>/</li>
+    <li class="text-gray-700 dark:text-gray-300">Detail</li>
+  </ol>
+</nav>
+
 <div class="grid grid-cols-12 gap-4 md:gap-6">
   <div class="col-span-12">
     <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/3">
@@ -10,9 +20,9 @@
       <div class="px-5 py-4 sm:px-6 sm:py-5 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
         <h3 class="text-base font-medium text-gray-800 dark:text-white/90">Vendor Details</h3>
         <div class="flex items-center gap-3">
-          <a href="{{ route('vendors.edit', $vendor) }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+          {{-- <a href="{{ route('vendors.edit', $vendor) }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
             Edit
-          </a>
+          </a> --}}
           <a href="{{ route('vendors.index') }}" class="text-sm text-blue-600 hover:underline">← Back</a>
         </div>
       </div>

@@ -1,7 +1,17 @@
 <?php $__env->startSection('title', 'Address Detail'); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="max-w-3xl mx-auto space-y-6">
+<nav class="text-sm text-gray-500 mb-5">
+  <ol class="flex items-center space-x-2">
+    <li><a href="<?php echo e(route('dashboard.index')); ?>" class="hover:underline">Dashboard</a></li>
+    <li>/</li>
+    <li><a href="<?php echo e(route('profile.addresses.index')); ?>" class="hover:underline">My Addresses</a></li>
+    <li>/</li>
+    <li class="text-gray-700 dark:text-gray-300">Detail</li>
+  </ol>
+</nav>
+
+<div class="max-w-6xl mx-auto space-y-6">
   <div class="flex justify-between items-center">
     <h1 class="text-xl font-semibold text-gray-800 dark:text-white">Address Detail</h1>
     <a href="<?php echo e(route('profile.addresses.index')); ?>" class="text-sm text-blue-600 hover:underline">← Back</a>

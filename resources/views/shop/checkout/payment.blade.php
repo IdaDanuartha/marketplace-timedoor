@@ -2,6 +2,16 @@
 @section('title', 'Payment')
 
 @section('content')
+<nav class="text-sm text-gray-500">
+  <ol class="flex items-center space-x-2">
+    <li><a href="{{ route('dashboard.index') }}" class="hover:underline">Dashboard</a></li>
+    <li>/</li>
+    <li><a href="{{ route('shop.orders.index') }}" class="hover:underline">Orders</a></li>
+    <li>/</li>
+    <li class="text-gray-700 dark:text-gray-300">Payment</li>
+  </ol>
+</nav>
+
 <div class="max-w-3xl mx-auto py-8 text-center">
   <h1 class="text-xl font-bold text-gray-800 dark:text-white mb-3">Payment for Order {{ $order->code }}</h1>
   <p class="text-gray-500 dark:text-gray-400 mb-6">Complete your payment securely using Midtrans</p>

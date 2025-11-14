@@ -1,7 +1,17 @@
 <?php $__env->startSection('title', 'Edit Profile'); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="max-w-3xl mx-auto space-y-8">
+
+<div class="max-w-5xl mx-auto space-y-8">
+  
+  <nav class="text-sm text-gray-500">
+    <ol class="flex items-center space-x-2">
+      <li><a href="<?php echo e(route('dashboard.index')); ?>" class="hover:underline">Dashboard</a></li>
+      <li>/</li>
+      <li class="text-gray-700 dark:text-gray-300">Edit Profile</li>
+    </ol>
+  </nav>
+  
   <div class="flex gap-3 mb-4 items-center">
     <h1 class="text-xl font-semibold text-gray-800 dark:text-white">Edit Profile</h1>
     <?php if(auth()->user()->vendor): ?>

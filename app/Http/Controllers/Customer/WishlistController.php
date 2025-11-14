@@ -3,41 +3,47 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Favorite, Product};
+use App\Interfaces\WishlistRepositoryInterface;
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use Throwable;
 
 class WishlistController extends Controller
 {
+    public function __construct(
+        private readonly WishlistRepositoryInterface $wishlistRepo
+    ) {}
+
     public function index()
     {
-        $customer = Auth::user()->customer;
-        $wishlist = Favorite::with('product.category')
-            ->where('customer_id', $customer->id)
-            ->latest()
-            ->get();
+        try {
+            $customer = Auth::user()->customer;
+            $wishlist = $this->wishlistRepo->getCustomerWishlist($customer->id);
 
-        return view('shop.wishlist.index', compact('wishlist'));
+            return view('shop.wishlist.index', compact('wishlist'));
+
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withErrors('Failed to load wishlist.');
+        }
     }
 
     public function toggle(Product $product)
     {
-        $customer = Auth::user()->customer;
+        try {
+            $customer = Auth::user()->customer;
 
-        $existing = Favorite::where('customer_id', $customer->id)
-            ->where('product_id', $product->id)
-            ->first();
+            $result = $this->wishlistRepo->toggle($customer->id, $product);
 
-        if ($existing) {
-            $existing->delete();
-            return back()->with('success', 'Removed from wishlist.');
+            return match ($result) {
+                'added'   => back()->with('success', 'Added to wishlist.'),
+                'removed' => back()->with('success', 'Removed from wishlist.'),
+                default   => back()->withErrors($result),
+            };
+
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withErrors('Failed to update wishlist.');
         }
-
-        Favorite::create([
-            'customer_id' => $customer->id,
-            'product_id' => $product->id,
-        ]);
-
-        return back()->with('success', 'Added to wishlist.');
     }
 }

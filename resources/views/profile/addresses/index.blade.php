@@ -4,6 +4,15 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto space-y-8" x-data="{ openDelete: false, deleteUrl: '' }">
+  {{-- Breadcrumb --}}
+  <nav class="text-sm text-gray-500">
+    <ol class="flex items-center space-x-2">
+      <li><a href="{{ route('dashboard.index') }}" class="hover:underline">Dashboard</a></li>
+      <li>/</li>
+      <li class="text-gray-700 dark:text-gray-300">My Addresses</li>
+    </ol>
+  </nav>
+
   <div class="flex items-center justify-between">
     <h1 class="text-xl font-semibold text-gray-800 dark:text-white">My Addresses</h1>
     <a href="{{ route('profile.addresses.create') }}" 

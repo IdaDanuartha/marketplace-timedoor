@@ -1,6 +1,16 @@
 <?php $__env->startSection('title', 'Add New Address'); ?>
 
 <?php $__env->startSection('content'); ?>
+<nav class="text-sm text-gray-500 mb-5">
+  <ol class="flex items-center space-x-2">
+    <li><a href="<?php echo e(route('dashboard.index')); ?>" class="hover:underline">Dashboard</a></li>
+    <li>/</li>
+    <li><a href="<?php echo e(route('profile.addresses.index')); ?>" class="hover:underline">My Addresses</a></li>
+    <li>/</li>
+    <li class="text-gray-700 dark:text-gray-300">Create</li>
+  </ol>
+</nav>
+
 <div class="grid grid-cols-12 gap-4 md:gap-6">
   <div class="col-span-12">
     

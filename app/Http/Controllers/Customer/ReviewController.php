@@ -2,56 +2,77 @@
 
 namespace App\Http\Controllers\Customer;
 
-use App\Enum\OrderStatus;
 use App\Http\Controllers\Controller;
-use App\Models\{Product, Review, OrderItem};
+use App\Interfaces\ReviewRepositoryInterface;
+use App\Models\{Product, Review};
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Throwable;
 
 class ReviewController extends Controller
 {
+    public function __construct(private readonly ReviewRepositoryInterface $reviewRepo) {}
+
     public function index()
     {
-        $customer = Auth::user()->customer;
-        $reviews = $customer->reviews()->with('product.category')->latest()->get();
+        try {
+            $customer = Auth::user()->customer;
+            $reviews = $this->reviewRepo->getCustomerReviews($customer->id);
 
-        return view('shop.reviews.index', compact('reviews'));
+            return view('shop.reviews.index', compact('reviews'));
+
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withErrors('Failed to load your reviews.');
+        }
     }
-
 
     public function store(Request $request, Product $product)
     {
-        $request->validate([
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:1000',
-        ]);
+        try {
+            $request->validate([
+                'rating' => 'required|integer|min:1|max:5',
+                'comment' => 'nullable|string|max:1000',
+            ]);
 
-        $customer = Auth::user()->customer;
+            $customer = Auth::user()->customer;
 
-        // Ensure customer bought this product
-        $hasDelivered = OrderItem::whereHas('order', function ($q) use ($customer) {
-            $q->where('customer_id', $customer->id)
-              ->where('status', OrderStatus::DELIVERED);
-        })->where('product_id', $product->id)->exists();
+            $allowed = $this->reviewRepo->canReviewProduct($customer->id, $product->id);
 
-        if (! $hasDelivered) {
-            return back()->withErrors('You can only review products you’ve purchased and received.');
+            if (!$allowed) {
+                return back()->withErrors('You can only review products you’ve purchased and received.');
+            }
+
+            $result = $this->reviewRepo->saveReview($customer->id, $product, $request->only('rating', 'comment'));
+
+            if ($result !== true) {
+                return back()->withErrors($result);
+            }
+
+            return back()->with('success', 'Your review has been submitted!');
+
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withErrors('Failed to submit review.');
         }
-
-        Review::updateOrCreate(
-            ['customer_id' => $customer->id, 'product_id' => $product->id],
-            ['rating' => $request->rating, 'comment' => $request->comment]
-        );
-
-        return back()->with('success', 'Your review has been submitted!');
     }
 
     public function destroy(Review $review)
     {
-        $customer = Auth::user()->customer;
-        abort_unless($review->customer_id === $customer->id, 403);
+        try {
+            $customer = Auth::user()->customer;
 
-        $review->delete();
-        return back()->with('success', 'Your review has been deleted.');
+            $result = $this->reviewRepo->deleteReview($review, $customer->id);
+
+            if ($result !== true) {
+                return back()->withErrors($result);
+            }
+
+            return back()->with('success', 'Your review has been deleted.');
+
+        } catch (Throwable $e) {
+            report($e);
+            return back()->withErrors('Failed to delete review.');
+        }
     }
 }
