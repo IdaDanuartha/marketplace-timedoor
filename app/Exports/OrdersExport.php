@@ -53,6 +53,7 @@ class OrdersExport implements FromCollection, WithHeadings, WithMapping
             'Payment Status',
             'Total Price',
             'Shipping Cost',
+            'Shipping Service',
             'Grand Total',
             'Created At',
         ];
@@ -70,6 +71,7 @@ class OrdersExport implements FromCollection, WithHeadings, WithMapping
             strtoupper($order->payment_status ?? '-'),
             'Rp' . number_format($order->total_price, 0, ',', '.'),
             'Rp' . number_format($order->shipping_cost, 0, ',', '.'),
+            $order->shipping_service ?? '-',
             'Rp' . number_format($order->grand_total, 0, ',', '.'),
             optional($order->created_at)->format('d M Y H:i'),
         ];
