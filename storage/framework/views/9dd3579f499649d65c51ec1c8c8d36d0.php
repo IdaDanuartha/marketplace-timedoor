@@ -252,7 +252,7 @@
                       $avatar = $user?->profile_image
                         ?? 'https://ui-avatars.com/api/?name=' . urlencode($review->customer->name ?? 'User') . '&background=random';
                     ?>
-                    <img src="<?php echo e($avatar); ?>" alt="Avatar"
+                    <img src="<?php echo e(profile_image($avatar)); ?>" alt="Avatar"
                          class="w-10 h-10 rounded-full object-cover border dark:border-gray-700">
 
                     

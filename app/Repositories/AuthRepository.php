@@ -61,29 +61,39 @@ class AuthRepository implements AuthRepositoryInterface
 
     public function registerGoogleUser(array $googleUser, string $role): User
     {
-        $user = User::create([
-            'username' => explode('@', $googleUser['email'])[0],
-            'email' => $googleUser['email'],
-            'password' => bcrypt(str()->random(12)),
-            'profile_image' => $googleUser['avatar'],
-            'google_id' => $googleUser['google_id'],
-            'email_verified_at' => now(),
-        ]);
+        try {
+            $user = User::create([
+                'username' => explode('@', $googleUser['email'])[0],
+                'email' => $googleUser['email'],
+                'password' => bcrypt(str()->random(12)),
+                'profile_image' => $googleUser['avatar'],
+                'google_id' => $googleUser['google_id'],
+                'email_verified_at' => now(),
+            ]);
 
-        if ($role === 'vendor') {
-            $user->vendor()->create(['name' => $googleUser['name']]);
-        } else {
-            $user->customer()->create(['name' => $googleUser['name']]);
+            if ($role === 'vendor') {
+                $user->vendor()->create(['name' => $googleUser['name']]);
+            } else {
+                $user->customer()->create(['name' => $googleUser['name']]);
+            }
+
+            return $user;
+        } catch (Throwable $e) {
+            report($e);
+            throw $e;
         }
-
-        return $user;
+        
     }
 
 
     public function logout(): void
     {
-        Auth::logout();
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
+        try {
+            Auth::logout();
+            request()->session()->invalidate();
+            request()->session()->regenerateToken();
+        } catch (Throwable $e) {
+            report($e);
+        }
     }
 }

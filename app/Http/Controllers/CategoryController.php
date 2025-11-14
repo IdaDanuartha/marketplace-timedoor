@@ -23,7 +23,7 @@ class CategoryController extends Controller
     {
         try {
             $filters = request()->only(['search', 'sort_by', 'sort_dir']);
-            $categories = $this->categories->paginateWithFilters($filters, 5);
+            $categories = $this->categories->paginateWithFilters($filters, 10);
             return view('admin.categories.index', compact('categories', 'filters'));
         } catch (Throwable $e) {
             Log::error('Failed to load categories: ' . $e->getMessage());

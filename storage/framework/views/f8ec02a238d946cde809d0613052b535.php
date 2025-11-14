@@ -4,7 +4,7 @@
 <div class="max-w-5xl mx-auto py-8 space-y-8">
   <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Checkout</h1>
 
-  <form action="<?php echo e(route('shop.checkout.process')); ?>" method="POST">
+  <form x-data="checkoutData(<?php echo e($subtotal); ?>, <?php echo e($shippingCost); ?>)" action="<?php echo e(route('shop.checkout.process')); ?>" method="POST">
     <?php echo csrf_field(); ?>
 
     
@@ -57,6 +57,61 @@
     </div>
 
     
+    <?php if(!empty($shippingOptions)): ?>
+    <div class="p-6 border rounded-lg my-4 bg-white dark:bg-gray-900">
+      <h2 class="font-semibold text-gray-800 dark:text-white mb-4">Shipping Method</h2>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <?php $__currentLoopData = $shippingOptions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $option): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+          <?php
+            $value = $option['code'].'|'.$option['service'].'|'.$option['cost'];
+          ?>
+
+          <label 
+            class="flex flex-col justify-between border rounded-lg p-4 cursor-pointer transition 
+                  hover:border-blue-500 dark:border-gray-700 dark:hover:border-blue-500">
+
+            <div class="flex items-start gap-3">
+              <input 
+                type="radio" 
+                name="shipping_service" 
+                value="<?php echo e($value); ?>" 
+                required
+                @click="updateShipping(<?php echo e($option['cost']); ?>)"
+                class="mt-1 w-4 h-4 text-blue-600 focus:ring-blue-500"
+              />
+
+              <div class="space-y-0.5">
+                <p class="font-semibold text-gray-800 dark:text-gray-100">
+                  <?php echo e($option['name']); ?> — <?php echo e($option['service']); ?>
+
+                </p>
+
+                <?php if(!empty($option['description'])): ?>
+                <p class="text-sm text-gray-600 dark:text-gray-300">
+                  <?php echo e($option['description'] === 'Unknown Service' ? '-' : $option['description']); ?>
+
+                </p>
+                <?php endif; ?>
+
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  Estimation: <?php echo e($option['etd'] ?? 'N/A'); ?>
+
+                </p>
+              </div>
+            </div>
+
+            <span class="font-semibold text-gray-900 dark:text-white mt-3 text-right">
+              Rp <?php echo e(number_format($option['cost'], 0, ',', '.')); ?>
+
+            </span>
+          </label>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+      </div>
+    </div>
+    <?php endif; ?>
+
+    
     <div class="p-6 border rounded-lg bg-white dark:bg-gray-900 space-y-3">
       <h2 class="font-semibold mb-3 text-gray-800 dark:text-white">Order Summary</h2>
       
@@ -73,10 +128,10 @@
         <span>Subtotal</span><span>Rp <?php echo e(number_format($subtotal, 0, ',', '.')); ?></span>
       </div>
       <div class="flex justify-between text-sm text-gray-700 dark:text-gray-300">
-        <span>Shipping</span><span>Rp <?php echo e(number_format($shippingCost, 0, ',', '.')); ?></span>
+        <span>Shipping</span><span x-text="'Rp ' + shipping.toLocaleString('id-ID')"></span>
       </div>
       <div class="flex justify-between font-semibold text-lg text-gray-800 dark:text-white">
-        <span>Total</span><span>Rp <?php echo e(number_format($grandTotal, 0, ',', '.')); ?></span>
+        <span>Total</span><span x-text="'Rp ' + grandTotal.toLocaleString('id-ID')" class="font-semibold text-lg text-gray-800 dark:text-white"></span>
       </div>
     </div>
 
@@ -91,4 +146,21 @@
   </form>
 </div>
 <?php $__env->stopSection(); ?>
+
+<?php $__env->startPush('js'); ?>
+<script>
+  function checkoutData(subtotal, initialShipping) {
+      return {
+          subtotal: subtotal,
+          shipping: initialShipping,
+          get grandTotal() {
+              return this.subtotal + this.shipping;
+          },
+          updateShipping(cost) {
+              this.shipping = parseInt(cost);
+          }
+      }
+  }
+</script>
+<?php $__env->stopPush(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /Users/gusde/Documents/laravel/marketplace-timedoor/resources/views/shop/checkout/index.blade.php ENDPATH**/ ?>

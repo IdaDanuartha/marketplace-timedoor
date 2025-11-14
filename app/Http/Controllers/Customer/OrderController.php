@@ -16,7 +16,7 @@ class OrderController extends Controller
         $orders = Order::with(['items.product'])
             ->where('customer_id', $customer->id)
             ->latest()
-            ->get();
+            ->paginate(10);
 
         return view('shop.orders.index', compact('orders'));
     }
@@ -74,6 +74,6 @@ class OrderController extends Controller
             'payment_status' => 'CANCELED',
         ]);
 
-        return redirect()->route('shop.orders.index')->with('success', 'Order has been canceled.');
+        return back()->with('success', 'Order has been canceled.');
     }
 }

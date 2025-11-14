@@ -9,3 +9,5 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/orders/get-addresses/{customer}', [OrderController::class, 'getAddresses'])->name('orders.getAddresses');
+
+Route::post('/shipping/calculate', [OrderController::class, 'calculateShipping']);

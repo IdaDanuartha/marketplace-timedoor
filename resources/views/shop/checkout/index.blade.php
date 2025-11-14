@@ -5,7 +5,7 @@
 <div class="max-w-5xl mx-auto py-8 space-y-8">
   <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Checkout</h1>
 
-  <form action="{{ route('shop.checkout.process') }}" method="POST">
+  <form x-data="checkoutData({{ $subtotal }}, {{ $shippingCost }})" action="{{ route('shop.checkout.process') }}" method="POST">
     @csrf
 
     {{-- Address Section --}}
@@ -56,6 +56,57 @@
       @endif
     </div>
 
+    {{-- Shipping Courier Section --}}
+    @if(!empty($shippingOptions))
+    <div class="p-6 border rounded-lg my-4 bg-white dark:bg-gray-900">
+      <h2 class="font-semibold text-gray-800 dark:text-white mb-4">Shipping Method</h2>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        @foreach($shippingOptions as $option)
+          @php
+            $value = $option['code'].'|'.$option['service'].'|'.$option['cost'];
+          @endphp
+
+          <label 
+            class="flex flex-col justify-between border rounded-lg p-4 cursor-pointer transition 
+                  hover:border-blue-500 dark:border-gray-700 dark:hover:border-blue-500">
+
+            <div class="flex items-start gap-3">
+              <input 
+                type="radio" 
+                name="shipping_service" 
+                value="{{ $value }}" 
+                required
+                @click="updateShipping({{ $option['cost'] }})"
+                class="mt-1 w-4 h-4 text-blue-600 focus:ring-blue-500"
+              />
+
+              <div class="space-y-0.5">
+                <p class="font-semibold text-gray-800 dark:text-gray-100">
+                  {{ $option['name'] }} — {{ $option['service'] }}
+                </p>
+
+                @if(!empty($option['description']))
+                <p class="text-sm text-gray-600 dark:text-gray-300">
+                  {{ $option['description'] === 'Unknown Service' ? '-' : $option['description'] }}
+                </p>
+                @endif
+
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  Estimation: {{ $option['etd'] ?? 'N/A' }}
+                </p>
+              </div>
+            </div>
+
+            <span class="font-semibold text-gray-900 dark:text-white mt-3 text-right">
+              Rp {{ number_format($option['cost'], 0, ',', '.') }}
+            </span>
+          </label>
+        @endforeach
+      </div>
+    </div>
+    @endif
+
     {{-- Cart Summary --}}
     <div class="p-6 border rounded-lg bg-white dark:bg-gray-900 space-y-3">
       <h2 class="font-semibold mb-3 text-gray-800 dark:text-white">Order Summary</h2>
@@ -73,10 +124,10 @@
         <span>Subtotal</span><span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
       </div>
       <div class="flex justify-between text-sm text-gray-700 dark:text-gray-300">
-        <span>Shipping</span><span>Rp {{ number_format($shippingCost, 0, ',', '.') }}</span>
+        <span>Shipping</span><span x-text="'Rp ' + shipping.toLocaleString('id-ID')"></span>
       </div>
       <div class="flex justify-between font-semibold text-lg text-gray-800 dark:text-white">
-        <span>Total</span><span>Rp {{ number_format($grandTotal, 0, ',', '.') }}</span>
+        <span>Total</span><span x-text="'Rp ' + grandTotal.toLocaleString('id-ID')" class="font-semibold text-lg text-gray-800 dark:text-white"></span>
       </div>
     </div>
 
@@ -91,3 +142,20 @@
   </form>
 </div>
 @endsection
+
+@push('js')
+<script>
+  function checkoutData(subtotal, initialShipping) {
+      return {
+          subtotal: subtotal,
+          shipping: initialShipping,
+          get grandTotal() {
+              return this.subtotal + this.shipping;
+          },
+          updateShipping(cost) {
+              this.shipping = parseInt(cost);
+          }
+      }
+  }
+</script>
+@endpush

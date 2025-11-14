@@ -27,7 +27,7 @@
               </svg>
             </button>
           </form>
-          <a href="{{ route('shop.products.show', $item->product) }}">
+          <a href="{{ route('shop.products.show', $item->product->slug) }}">
             <img src="{{ profile_image($item->product->image_path) }}" 
                  alt="{{ $item->product->name }}" class="w-full h-48 object-cover rounded mb-3">
             <h2 class="font-semibold text-gray-800 dark:text-white truncate">{{ $item->product->name }}</h2>

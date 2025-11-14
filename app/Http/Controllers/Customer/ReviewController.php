@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Customer;
 
+use App\Enum\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\{Product, Review, OrderItem};
 use Illuminate\Support\Facades\Auth;
@@ -28,13 +29,13 @@ class ReviewController extends Controller
         $customer = Auth::user()->customer;
 
         // Ensure customer bought this product
-        $hasBought = OrderItem::whereHas('order', function ($q) use ($customer) {
+        $hasDelivered = OrderItem::whereHas('order', function ($q) use ($customer) {
             $q->where('customer_id', $customer->id)
-              ->whereIn('status', ['DELIVERED', 'PROCESSING', 'SHIPPED']);
+              ->where('status', OrderStatus::DELIVERED);
         })->where('product_id', $product->id)->exists();
 
-        if (! $hasBought) {
-            return back()->withErrors('You can only review products you’ve purchased.');
+        if (! $hasDelivered) {
+            return back()->withErrors('You can only review products you’ve purchased and received.');
         }
 
         Review::updateOrCreate(

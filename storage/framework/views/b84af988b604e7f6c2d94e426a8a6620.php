@@ -4,6 +4,14 @@
 <div class="max-w-6xl mx-auto py-8 space-y-6" x-data="{ isModalOpen: false, deleteUrl: '', title: '' }">
   <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">My Orders</h1>
 
+  
+  <?php if(session('success')): ?>
+    <div class="p-3 bg-green-100 border border-green-300 text-green-800 rounded-lg mb-4"><?php echo e(session('success')); ?></div>
+  <?php endif; ?>
+  <?php if($errors->any()): ?>
+    <div class="p-3 bg-red-100 border border-red-300 text-red-800 rounded-lg mb-4"><?php echo e($errors->first()); ?></div>
+  <?php endif; ?>
+
   <?php if($orders->isEmpty()): ?>
     <div class="p-6 text-center bg-white dark:bg-gray-900 border rounded-lg text-gray-600 dark:text-gray-300">
       You have no orders yet.
@@ -84,6 +92,12 @@
           </div>
         </div>
       <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+      
+      <div class="mt-6">
+        <?php echo e($orders->links()); ?>
+
+      </div>
     </div>
   <?php endif; ?>
 

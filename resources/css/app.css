@@ -274,6 +274,10 @@ layer(base);
   body {
     @apply relative text-base font-normal font-outfit z-1 bg-gray-50;
   }
+
+  td {
+    @apply text-nowrap;
+  }
 }
 
 @layer utilities {

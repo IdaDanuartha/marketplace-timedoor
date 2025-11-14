@@ -31,5 +31,4 @@
   window.chartData = @json($chartData);
   window.topProducts = @json($topProducts);
 </script>
-{{-- <script type="module" src="{{ mix('js/charts/dashboard.js') }}"></script> --}}
 @endpush

@@ -114,6 +114,14 @@
           </div>
 
           <div>
+            <p class="text-gray-500 dark:text-gray-400">Shipping Service</p>
+            <p class="font-medium text-gray-800 dark:text-gray-100">
+              <?php echo e($order->shipping_service); ?>
+
+            </p>
+          </div>
+
+          <div>
             <p class="text-gray-500 dark:text-gray-400">Shipping Cost</p>
             <p class="font-medium text-gray-800 dark:text-gray-100">
               Rp<?php echo e(number_format($order->shipping_cost, 0, ',', '.')); ?>
@@ -186,7 +194,7 @@
                 <tr>
                   <td colspan="3" class="px-5 py-3 text-right font-bold text-gray-800 dark:text-gray-100">Total:</td>
                   <td class="px-5 py-3 text-center font-bold text-lg text-blue-600 dark:text-blue-400">
-                    Rp<?php echo e(number_format($order->total_price, 0, ',', '.')); ?>
+                    Rp<?php echo e(number_format($order->grand_total, 0, ',', '.')); ?>
 
                   </td>
                 </tr>

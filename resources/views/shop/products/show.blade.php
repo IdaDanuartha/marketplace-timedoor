@@ -250,7 +250,7 @@
                       $avatar = $user?->profile_image
                         ?? 'https://ui-avatars.com/api/?name=' . urlencode($review->customer->name ?? 'User') . '&background=random';
                     @endphp
-                    <img src="{{ $avatar }}" alt="Avatar"
+                    <img src="{{ profile_image($avatar) }}" alt="Avatar"
                          class="w-10 h-10 rounded-full object-cover border dark:border-gray-700">
 
                     {{-- Review Body --}}

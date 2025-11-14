@@ -10,14 +10,16 @@ use App\Models\Address;
 use App\Models\Order;
 use App\Models\Customer;
 use App\Models\Product;
+use App\Services\RajaOngkirService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class OrderController extends Controller
 {
-    public function __construct(protected readonly OrderRepositoryInterface $orders)
+    public function __construct(protected readonly OrderRepositoryInterface $orders, protected readonly RajaOngkirService $rajaOngkir)
     {
         $this->authorizeResource(Order::class, 'order');
     }
@@ -180,10 +182,48 @@ class OrderController extends Controller
     public function getAddresses(Customer $customer)
     {
         $addresses = $customer->addresses()
-            ->select('addresses.id', 'addresses.label', 'addresses.full_address')
+            ->select('addresses.id', 'addresses.label', 'addresses.full_address', 'addresses.district_id')
             ->orderBy('addresses.created_at', 'desc')
             ->get();
 
         return response()->json($addresses);
+    }
+
+    public function calculateShipping(\Illuminate\Http\Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'destination' => 'required|integer',
+                'weight' => 'required|integer|min:1'
+            ]);
+
+            $rajaOngkir = app(\App\Services\RajaOngkirService::class);
+            
+            $result = $rajaOngkir->calculateDomesticCost(
+                destination: (int) $validated['destination'],
+                weight: (int) $validated['weight'],
+            );
+
+            return response()->json([
+                'success' => true,
+                'data' => $result
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation failed',
+                'messages' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Shipping calculation error: ' . $e->getMessage(), [
+                'request' => $request->all()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to calculate shipping cost',
+                'message' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
+        }
     }
 }

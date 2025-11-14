@@ -25,7 +25,7 @@
               </svg>
             </button>
           </form>
-          <a href="<?php echo e(route('shop.products.show', $item->product)); ?>">
+          <a href="<?php echo e(route('shop.products.show', $item->product->slug)); ?>">
             <img src="<?php echo e(profile_image($item->product->image_path)); ?>" 
                  alt="<?php echo e($item->product->name); ?>" class="w-full h-48 object-cover rounded mb-3">
             <h2 class="font-semibold text-gray-800 dark:text-white truncate"><?php echo e($item->product->name); ?></h2>

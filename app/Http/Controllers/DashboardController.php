@@ -145,22 +145,10 @@ class DashboardController extends Controller
         $orderHistory = Order::with(['items.product'])
             ->where('customer_id', $customerId)
             ->latest()
+            ->limit(10)
             ->get();
 
-        // Log activity bisa pakai table lain, sementara dummy aja
-        $orderLogs = $orderHistory->flatMap(function ($order) {
-            return $order->items->map(function ($item) use ($order) {
-                return [
-                    'order_code' => $order->code,
-                    'product' => $item->product->name ?? 'Unknown',
-                    'qty' => $item->qty,
-                    'status' => $order->status,
-                    'updated_at' => $order->updated_at->format('Y-m-d H:i'),
-                ];
-            });
-        });
-
-        return view('customer.dashboard.index', compact('metrics', 'orderHistory', 'orderLogs'));
+        return view('customer.dashboard.index', compact('metrics', 'orderHistory'));
     }
 
     // ==============================================

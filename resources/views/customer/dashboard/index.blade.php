@@ -3,6 +3,14 @@
 @section('title', 'Customer Dashboard')
 
 @section('content')
+{{-- Alerts --}}
+@if (session('success'))
+<div class="p-3 bg-green-100 border border-green-300 text-green-800 rounded-lg mb-4">{{ session('success') }}</div>
+@endif
+@if ($errors->any())
+<div class="p-3 bg-red-100 border border-red-300 text-red-800 rounded-lg mb-4">{{ $errors->first() }}</div>
+@endif
+
 <div class="space-y-8" x-data="{ isModalOpen: false, deleteUrl: '', title: '' }">
   <!-- METRICS -->
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -56,7 +64,7 @@
             @foreach ($orderHistory as $order)
               <tr class="bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
                 <td class="py-2 px-3 font-medium text-gray-800 dark:text-white">
-                  <a href="{{ route('shop.orders.show', $order) }}" class="hover:text-blue-600">
+                  <a href="{{ route('shop.orders.show', $order->code) }}" class="hover:text-blue-600">
                     {{ $order->code }}
                   </a>
                 </td>
@@ -65,23 +73,26 @@
                   Rp {{ number_format($order->grand_total ?? $order->total_price, 0, ',', '.') }}
                 </td>
                 <td class="py-2 px-3">
-                  <span class="px-2 py-1 rounded-full text-xs font-medium
-                    @class([
-                      'bg-yellow-100 text-yellow-700' => $order->status === \App\Enum\OrderStatus::PENDING,
-                      'bg-blue-100 text-blue-700' => $order->status === \App\Enum\OrderStatus::PROCESSING,
-                      'bg-purple-100 text-purple-700' => $order->status === \App\Enum\OrderStatus::SHIPPED,
-                      'bg-green-100 text-green-700' => $order->status === \App\Enum\OrderStatus::DELIVERED,
-                      'bg-red-100 text-red-700' => $order->status === \App\Enum\OrderStatus::CANCELED,
-                    ])">
+                  @php
+                    $color = match($order->status) {
+                        \App\Enum\OrderStatus::PENDING => 'bg-yellow-100 text-yellow-700',
+                        \App\Enum\OrderStatus::PROCESSING => 'bg-blue-100 text-blue-700',
+                        \App\Enum\OrderStatus::CANCELED => 'bg-red-100 text-red-700',
+                        \App\Enum\OrderStatus::SHIPPED => 'bg-indigo-100 text-indigo-700',
+                        \App\Enum\OrderStatus::DELIVERED => 'bg-green-100 text-green-700',
+                        default => 'bg-gray-100 text-gray-600',
+                    };
+                    @endphp
+                    <span class="px-2 py-1 rounded-full text-xs font-medium {{ $color }}">
                     {{ $order->status->label() }}
-                  </span>
+                    </span>
                 </td>
                 <td class="py-2 px-3 text-gray-600 dark:text-gray-300">
                   {{ $order->created_at->format('d M Y') }}
                 </td>
                 <td class="py-2 px-3 text-right flex justify-end gap-2">
                   <a href="{{ route('shop.orders.show', $order->code) }}"
-                     class="text-xs px-3 py-1.5 rounded-lg border text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                     class="text-xs px-3 py-1.5 rounded-lg border dark:border-white/20 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
                     View
                   </a>
 
