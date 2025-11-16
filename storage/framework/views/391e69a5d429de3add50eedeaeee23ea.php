@@ -7,7 +7,7 @@
         <!-- Metric Group One -->
         <?php if (isset($component)) { $__componentOriginal05a10049c130e9e1a2a316edd9f050e6 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal05a10049c130e9e1a2a316edd9f050e6 = $attributes; } ?>
-<?php $component = App\View\Components\MetricGroupDashboard::resolve(['metrics' => $metrics] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = App\View\Components\MetricGroupDashboard::resolve(['metrics' => $metrics,'totalIncomesAllTime' => $totalIncomesAllTime] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('metric-group-dashboard'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>

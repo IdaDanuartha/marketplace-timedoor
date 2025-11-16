@@ -15,7 +15,7 @@
 <div class="grid grid-cols-12 gap-4 md:gap-6">
   <div class="col-span-12 space-y-6">
     <!-- Metric Group -->
-    <x-metric-group-dashboard :metrics="$metrics" />
+    <x-metric-group-dashboard :metrics="$metrics" :totalIncomesAllTime="$totalIncomesAllTime" />
 
     <!-- Charts Section -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -69,8 +69,9 @@ class DashboardController extends Controller
         $chartData = $this->getOrdersChartData();
         $topProducts = $this->getTopProducts();
         $recentOrders = Order::with(['customer', 'items.product'])->latest()->take(5)->get();
+        $totalIncomesAllTime = Order::sum('total_price');
 
-        return view('admin.dashboard.index', compact('metrics', 'chartData', 'topProducts', 'recentOrders'));
+        return view('admin.dashboard.index', compact('metrics', 'chartData', 'topProducts', 'recentOrders', 'totalIncomesAllTime'));
     }
 
     // VENDOR ROLE
@@ -124,7 +125,9 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('vendor.dashboard.index', compact('metrics', 'chartData', 'topProducts', 'recentOrders'));
+        $totalIncomesAllTime = $orders->sum('total_price');
+
+        return view('vendor.dashboard.index', compact('metrics', 'chartData', 'topProducts', 'recentOrders', 'totalIncomesAllTime'));
     }
 
     // CUSTOMER ROLE

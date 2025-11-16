@@ -11,7 +11,7 @@
       <li class="text-gray-700 dark:text-gray-300">Edit Profile</li>
     </ol>
   </nav>
-  
+
   <div class="flex gap-3 mb-4 items-center">
     <h1 class="text-xl font-semibold text-gray-800 dark:text-white">Edit Profile</h1>
     <?php if(auth()->user()->vendor): ?>
