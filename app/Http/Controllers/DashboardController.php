@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\OrderStatus;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -69,7 +70,7 @@ class DashboardController extends Controller
         $chartData = $this->getOrdersChartData();
         $topProducts = $this->getTopProducts();
         $recentOrders = Order::with(['customer', 'items.product'])->latest()->take(5)->get();
-        $totalIncomesAllTime = Order::sum('total_price');
+        $totalIncomesAllTime = Order::where('status', OrderStatus::DELIVERED)->sum('total_price');
 
         return view('admin.dashboard.index', compact('metrics', 'chartData', 'topProducts', 'recentOrders', 'totalIncomesAllTime'));
     }
@@ -125,7 +126,7 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        $totalIncomesAllTime = $orders->sum('total_price');
+        $totalIncomesAllTime = $orders->where('status', OrderStatus::DELIVERED)->sum('total_price');
 
         return view('vendor.dashboard.index', compact('metrics', 'chartData', 'topProducts', 'recentOrders', 'totalIncomesAllTime'));
     }
