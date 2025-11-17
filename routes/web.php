@@ -84,6 +84,9 @@ Route::middleware(['auth', EnsureVendorApproved::class, CheckMaintenanceMode::cl
         Route::get('/orders/export', [OrderController::class, 'export'])->name('orders.export');
         Route::resource('orders', OrderController::class);
         Route::put('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+        Route::get('/orders/{order}/invoice', [OrderController::class, 'invoice'])->name('orders.invoice');
+        Route::get('/orders/{order}/download-invoice', [OrderController::class, 'downloadInvoice'])->name('orders.downloadInvoice');
+        Route::post('/orders/send-invoices', [OrderController::class, 'sendInvoices'])->name('orders.send-invoices');
         Route::resource('vendors', VendorController::class);
         Route::resource('customers', CustomerController::class);
         Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');
@@ -129,3 +132,7 @@ Route::middleware(['auth', EnsureVendorApproved::class, CheckMaintenanceMode::cl
         });
 
     });
+    
+
+// Public Invoice Route
+Route::get('/invoice/{code}', [OrderController::class, 'publicInvoice'])->name('orders.public-invoice');

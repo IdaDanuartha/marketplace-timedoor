@@ -6,11 +6,13 @@ use App\Enum\OrderStatus;
 use App\Http\Requests\Order\StoreOrderRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Interfaces\OrderRepositoryInterface;
+use App\Jobs\SendInvoiceEmailJob;
 use App\Models\Address;
 use App\Models\Order;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Services\RajaOngkirService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -225,5 +227,73 @@ class OrderController extends Controller
                 'message' => config('app.debug') ? $e->getMessage() : null
             ], 500);
         }
+    }
+
+    public function invoice(Order $order)
+    {
+        // Load relations
+        $order->load(['customer', 'items.product']);
+        
+        return view('admin.orders.invoice', compact('order'));
+    }
+
+    public function downloadInvoice(Order $order)
+    {
+        // Load relations
+        $order->load(['customer', 'items.product']);
+        
+        // Generate PDF menggunakan DomPDF
+        $pdf = Pdf::loadView('admin.orders.invoice-pdf', compact('order'));
+
+        return $pdf->download('invoice-' . $order->code . '.pdf');
+    }
+
+    public function publicInvoice($code)
+    {
+        $order = Order::with(['customer.user', 'items.product', 'address'])
+            ->where('code', $code)
+            ->firstOrFail();
+
+        return view('admin.orders.invoice-pdf', compact('order'));
+    }
+
+    public function sendInvoices(Request $request)
+    {
+        $request->validate([
+            'order_ids' => 'required|array|min:1',
+            'order_ids.*' => 'exists:orders,id',
+            'send_pdf' => 'boolean',
+        ]);
+
+        $orderIds = $request->order_ids;
+        $sendPdf = $request->boolean('send_pdf', true);
+        
+        $orders = Order::with(['customer.user'])
+            ->whereIn('id', $orderIds)
+            ->get();
+
+        $successCount = 0;
+        $failedCount = 0;
+        $failedOrders = [];
+
+        foreach ($orders as $order) {
+            // Check if customer has email
+            if (!$order->customer || !$order->customer->user || !$order->customer->user->email) {
+                $failedCount++;
+                $failedOrders[] = $order->code;
+                continue;
+            }
+
+            // Dispatch job to queue
+            SendInvoiceEmailJob::dispatch($order, $sendPdf);
+            $successCount++;
+        }
+
+        if ($failedCount > 0) {
+            $message = "{$successCount} invoice(s) queued for sending. {$failedCount} failed (no email): " . implode(', ', $failedOrders);
+            return redirect()->back()->with('warning', $message);
+        }
+
+        return redirect()->back()->with('success', "{$successCount} invoice(s) have been queued for sending.");
     }
 }

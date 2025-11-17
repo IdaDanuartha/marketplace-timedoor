@@ -206,6 +206,14 @@
         
         <?php if(auth()->user()?->admin): ?>
           <div class="flex justify-end mt-6 gap-3">
+            <a href="<?php echo e(route('orders.public-invoice', $order->code)); ?>" 
+              class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-sm">
+              View Public Invoice
+            </a>
+            <a href="<?php echo e(route('orders.invoice', $order)); ?>" 
+              class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm">
+              View Invoice
+            </a>
             <a href="<?php echo e(route('orders.edit', $order)); ?>" 
               class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm">
               Edit
