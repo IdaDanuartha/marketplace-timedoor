@@ -1,7 +1,7 @@
 <div 
     x-show="isConfirmModalOpen"
     x-cloak
-    class="fixed inset-0 flex items-center justify-center p-5 z-[99999]"
+    class="fixed inset-0 flex items-center justify-center p-5 z-99999"
 >
 
     <!-- Backdrop -->

@@ -3,7 +3,7 @@
       <table class="min-w-full text-left text-sm">
         <thead class="border-b border-gray-100 bg-gray-50 dark:border-white/20 dark:bg-white/5">
           <tr>
-            <?php if(auth()->user()?->admin): ?>
+            
               <th class="px-5 py-3 w-12">
                 <input 
                   type="checkbox" 
@@ -12,7 +12,7 @@
                   class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 >
               </th>
-            <?php endif; ?>
+            
             <th class="px-5 py-3 font-medium text-gray-600 dark:text-white">Code</th>
             <th class="px-5 py-3 font-medium text-gray-600 dark:text-white">Customer</th>
             <th class="px-5 py-3 font-medium text-gray-600 dark:text-white">Total</th>
@@ -28,7 +28,7 @@
         <tbody class="divide-y divide-gray-100">
           <?php $__empty_1 = true; $__currentLoopData = $orders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $order): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
             <tr class="hover:bg-gray-50 transition-colors">
-              <?php if(auth()->user()?->admin): ?>
+              
                 <td class="px-5 py-3">
                   <input 
                     type="checkbox" 
@@ -39,7 +39,7 @@
                     onclick="event.stopPropagation()"
                   >
                 </td>
-              <?php endif; ?>
+              
               <td class="px-5 py-3 font-semibold text-gray-800 cursor-pointer" onclick="window.location='<?php echo e(route('orders.show', $order)); ?>'">
                 <?php echo e($order->code); ?>
 
